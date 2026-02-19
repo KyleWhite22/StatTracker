@@ -14,6 +14,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mobileapps.stattracker.AuthState
+import com.mobileapps.stattracker.AuthViewModel
 
 val Orange = Color(0xFFFF9800)
 val DarkBg = Color(0xFF121212)
@@ -23,10 +26,20 @@ val TextGray = Color(0xFFAAAAAA)
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
-    onGoToSignUp: () -> Unit
+    onGoToSignUp: () -> Unit,
+    authViewModel: AuthViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val authState by authViewModel.authState.collectAsState()
+
+    LaunchedEffect(authState) {
+        if (authState is AuthState.Success) {
+            authViewModel.resetState()
+            onLoginSuccess()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -41,8 +54,6 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
-            // Logo / Title
             Text(
                 text = "Pick UP↑",
                 color = Orange,
@@ -53,7 +64,6 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Email field
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -70,7 +80,6 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Password field
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
@@ -88,29 +97,42 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            if (authState is AuthState.Error) {
+                Text(
+                    text = "Account username/password wrong or doesn't exist",
+                    color = Color.Red,
+                    fontSize = 13.sp
+                )
+            }
+
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Login button
             Button(
-                onClick = onLoginSuccess,
+                onClick = { authViewModel.login(email, password) },
+                enabled = authState !is AuthState.Loading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Orange)
             ) {
-                Text(
-                    text = "Log In",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
+                if (authState is AuthState.Loading) {
+                    CircularProgressIndicator(
+                        color = Color.Black,
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text(
+                        text = "Log In",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                }
             }
 
-            // Sign up link
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Don't have an account? ", color = TextGray, fontSize = 14.sp)
                 TextButton(onClick = onGoToSignUp) {
                     Text("Sign Up", color = Orange, fontSize = 14.sp, fontWeight = FontWeight.Bold)

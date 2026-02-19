@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mobileapps.stattracker.R
-
+import com.mobileapps.stattracker.ui.theme.*
 @Composable
 fun HomeScreen(
     onGroupClick: (String) -> Unit

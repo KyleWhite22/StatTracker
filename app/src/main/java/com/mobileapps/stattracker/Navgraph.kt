@@ -29,10 +29,12 @@ fun NavGraph(
 
         composable(NavRoutes.SignUp.route) {
             SignUpScreen(
-                onSignUpSuccess = { navController.navigate(NavRoutes.Home.route) {
-                    popUpTo(NavRoutes.Login.route) { inclusive = true }
-                }},
-                onGoToLogin     = { navController.popBackStack() }
+                onSignUpSuccess = { email ->
+                    navController.navigate(NavRoutes.CheckEmail.createRoute(email)) {
+                        popUpTo(NavRoutes.SignUp.route) { inclusive = true }
+                    }
+                },
+                onGoToLogin = { navController.popBackStack() }
             )
         }
 
@@ -42,6 +44,19 @@ fun NavGraph(
                 onGroupClick = { groupId ->
                     navController.navigate(NavRoutes.GroupView.createRoute(groupId))
                 }
+            )
+        }
+
+        composable(
+            route = NavRoutes.CheckEmail.route,
+            arguments = listOf(navArgument("email") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            CheckEmailScreen(
+                email = email,
+                onGoToLogin = { navController.navigate(NavRoutes.Login.route) {
+                    popUpTo(NavRoutes.Login.route) { inclusive = true }
+                }}
             )
         }
 

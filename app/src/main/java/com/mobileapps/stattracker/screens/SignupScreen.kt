@@ -14,18 +14,30 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mobileapps.stattracker.AuthState
+import com.mobileapps.stattracker.AuthViewModel
 
 @Composable
 fun SignUpScreen(
-    onSignUpSuccess: () -> Unit,
-    onGoToLogin: () -> Unit
+    onSignUpSuccess: (String) -> Unit,
+    onGoToLogin: () -> Unit,
+    authViewModel: AuthViewModel = viewModel()
 ) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var height by remember { mutableStateOf("") }
-    var age by remember { mutableStateOf("") }
+
+
+    val authState by authViewModel.authState.collectAsState()
+
+    LaunchedEffect(authState) {
+        if (authState is AuthState.Success) {
+            authViewModel.resetState()
+            onSignUpSuccess(email)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -40,8 +52,6 @@ fun SignUpScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-
-            // Logo / Title
             Text(
                 text = "Pick UP↑",
                 color = Orange,
@@ -50,15 +60,10 @@ fun SignUpScreen(
                 letterSpacing = 1.sp
             )
 
-            Text(
-                text = "Create your account",
-                color = TextGray,
-                fontSize = 14.sp
-            )
+            Text("Create your account", color = TextGray, fontSize = 14.sp)
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // Username
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
@@ -74,7 +79,6 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Email
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -91,7 +95,6 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Password
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
@@ -109,7 +112,6 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Confirm Password
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
@@ -128,26 +130,42 @@ fun SignUpScreen(
             )
 
 
+
+            if (authState is AuthState.Error) {
+                Text(
+                    text = (authState as AuthState.Error).message,
+                    color = Color.Red,
+                    fontSize = 13.sp
+                )
+            }
+
             Spacer(modifier = Modifier.height(4.dp))
 
-            // Create Account button
             Button(
-                onClick = onSignUpSuccess,
+                onClick = { authViewModel.signUp(email, password, confirmPassword, username) },
+                enabled = authState !is AuthState.Loading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Orange)
             ) {
-                Text(
-                    text = "Create Account",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
+                if (authState is AuthState.Loading) {
+                    CircularProgressIndicator(
+                        color = Color.Black,
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text(
+                        text = "Create Account",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                }
             }
 
-            // Back to login link
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Already have an account? ", color = TextGray, fontSize = 14.sp)
                 TextButton(onClick = onGoToLogin) {

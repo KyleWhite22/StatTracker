@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.navigation.compose.rememberNavController
 import com.mobileapps.stattracker.ui.theme.StatTrackerTheme
 
 class MainActivity : ComponentActivity() {
@@ -12,8 +13,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             StatTrackerTheme {
-                    Home()
+                val navController = rememberNavController()
+                NavGraph(navController = navController)
             }
         }
     }
 }
+
+
+
+
+
+

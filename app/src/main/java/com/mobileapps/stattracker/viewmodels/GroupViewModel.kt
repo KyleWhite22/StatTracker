@@ -22,9 +22,19 @@ class GroupViewModel : ViewModel() {
                 groups = result.documents.mapNotNull { it.toObject(Group::class.java) }
             }
     }
-    fun createGroup(group: Group) {
-        db.collection("groups")
-            .add(group)
-            .addOnSuccessListener { loadGroups() }
+    fun createGroup(name: String, location: String, onSuccess: () -> Unit) {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        val docRef = db.collection("groups").document()
+        val group = Group(
+            id = docRef.id,
+            ownerID = currentUserId,
+            name = name,
+            location = location
+        )
+        docRef.set(group)
+            .addOnSuccessListener {
+                loadGroups()
+                onSuccess()
+            }
     }
 }

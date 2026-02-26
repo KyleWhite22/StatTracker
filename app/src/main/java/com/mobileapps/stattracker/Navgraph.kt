@@ -23,9 +23,9 @@ fun NavGraph(
     NavHost(
         navController = navController,
         //use this for debugging:
-        //startDestination = NavRoutes.Home.route
+        startDestination = NavRoutes.Home.route
         //otherwise:
-        startDestination = NavRoutes.Login.route
+        //startDestination = NavRoutes.Login.route
 
     ) {
 
@@ -85,11 +85,9 @@ fun NavGraph(
         composable(NavRoutes.CreateGroup.route) {
             CreateGroupScreen(
                 onSubmitClick = { name, location ->
-                    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-                    groupViewModel.createGroup(
-                        Group(name = name, location = location, ownerID = currentUserId)
-                    )
-                    navController.navigate(NavRoutes.Home.route)
+                    groupViewModel.createGroup(name, location) {
+                        navController.navigate(NavRoutes.Home.route)
+                    }
                 }
             )
         }

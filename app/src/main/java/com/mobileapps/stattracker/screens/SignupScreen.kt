@@ -15,8 +15,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mobileapps.stattracker.AuthState
-import com.mobileapps.stattracker.AuthViewModel
+import com.mobileapps.stattracker.viewmodels.AuthState
+import com.mobileapps.stattracker.viewmodels.AuthViewModel
+import com.mobileapps.stattracker.ui.theme.BackgroundColor
+import com.mobileapps.stattracker.ui.theme.MainColor
 
 @Composable
 fun SignUpScreen(
@@ -42,7 +44,7 @@ fun SignUpScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkBg),
+            .background(BackgroundColor),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -54,13 +56,11 @@ fun SignUpScreen(
         ) {
             Text(
                 text = "Pick UP↑",
-                color = Orange,
+                color = MainColor,
                 fontSize = 42.sp,
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 1.sp
             )
-
-            Text("Create your account", color = TextGray, fontSize = 14.sp)
 
             Spacer(modifier = Modifier.height(4.dp))
 
@@ -70,11 +70,11 @@ fun SignUpScreen(
                 label = { Text("Username", color = TextGray) },
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Orange,
+                    focusedBorderColor = MainColor,
                     unfocusedBorderColor = TextGray,
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    cursorColor = Orange
+                    cursorColor = MainColor
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -86,11 +86,11 @@ fun SignUpScreen(
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Orange,
+                    focusedBorderColor = MainColor,
                     unfocusedBorderColor = TextGray,
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    cursorColor = Orange
+                    cursorColor = MainColor
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -103,11 +103,11 @@ fun SignUpScreen(
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Orange,
+                    focusedBorderColor = MainColor,
                     unfocusedBorderColor = TextGray,
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    cursorColor = Orange
+                    cursorColor = MainColor
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -120,11 +120,11 @@ fun SignUpScreen(
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Orange,
+                    focusedBorderColor = MainColor,
                     unfocusedBorderColor = TextGray,
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    cursorColor = Orange
+                    cursorColor = MainColor
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -148,7 +148,7 @@ fun SignUpScreen(
                     .fillMaxWidth()
                     .height(52.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Orange)
+                colors = ButtonDefaults.buttonColors(containerColor = MainColor)
             ) {
                 if (authState is AuthState.Loading) {
                     CircularProgressIndicator(
@@ -169,7 +169,7 @@ fun SignUpScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Already have an account? ", color = TextGray, fontSize = 14.sp)
                 TextButton(onClick = onGoToLogin) {
-                    Text("Log In", color = Orange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text("Log In", color = MainColor, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }

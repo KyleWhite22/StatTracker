@@ -15,12 +15,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mobileapps.stattracker.AuthState
-import com.mobileapps.stattracker.AuthViewModel
+import com.mobileapps.stattracker.viewmodels.AuthState
+import com.mobileapps.stattracker.viewmodels.AuthViewModel
+import com.mobileapps.stattracker.ui.theme.BackgroundColor
+import com.mobileapps.stattracker.ui.theme.MainColor
 
-val Orange = Color(0xFFFF9800)
-val DarkBg = Color(0xFF121212)
-val SurfaceColor = Color(0xFF1E1E1E)
 val TextGray = Color(0xFFAAAAAA)
 
 @Composable
@@ -44,7 +43,7 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkBg),
+            .background(BackgroundColor),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -56,7 +55,7 @@ fun LoginScreen(
         ) {
             Text(
                 text = "Pick UP↑",
-                color = Orange,
+                color = MainColor,
                 fontSize = 42.sp,
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 1.sp
@@ -71,11 +70,11 @@ fun LoginScreen(
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Orange,
+                    focusedBorderColor = MainColor,
                     unfocusedBorderColor = TextGray,
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    cursorColor = Orange
+                    cursorColor = MainColor
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -88,11 +87,11 @@ fun LoginScreen(
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Orange,
+                    focusedBorderColor = MainColor,
                     unfocusedBorderColor = TextGray,
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    cursorColor = Orange
+                    cursorColor = MainColor
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -114,7 +113,7 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .height(52.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Orange)
+                colors = ButtonDefaults.buttonColors(containerColor = MainColor)
             ) {
                 if (authState is AuthState.Loading) {
                     CircularProgressIndicator(
@@ -135,7 +134,7 @@ fun LoginScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Don't have an account? ", color = TextGray, fontSize = 14.sp)
                 TextButton(onClick = onGoToSignUp) {
-                    Text("Sign Up", color = Orange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text("Sign Up", color = MainColor, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }

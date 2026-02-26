@@ -13,8 +13,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mobileapps.stattracker.AuthState
-import com.mobileapps.stattracker.AuthViewModel
+import com.mobileapps.stattracker.viewmodels.AuthState
+import com.mobileapps.stattracker.viewmodels.AuthViewModel
+import com.mobileapps.stattracker.ui.theme.BackgroundColor
+import com.mobileapps.stattracker.ui.theme.MainColor
 
 @Composable
 fun CheckEmailScreen(
@@ -27,7 +29,7 @@ fun CheckEmailScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkBg),
+            .background(BackgroundColor),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -38,15 +40,9 @@ fun CheckEmailScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            // Icon
-            Text(
-                text = "📧",
-                fontSize = 64.sp
-            )
-
             Text(
                 text = "Check Your Email",
-                color = Orange,
+                color = MainColor,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.ExtraBold
             )
@@ -61,7 +57,7 @@ fun CheckEmailScreen(
             // Email container
             Box(
                 modifier = Modifier
-                    .background(SurfaceColor, RoundedCornerShape(8.dp))
+                    .background(MainColor, RoundedCornerShape(8.dp))
                     .padding(horizontal = 16.dp, vertical = 10.dp)
             ) {
                 Text(
@@ -88,7 +84,7 @@ fun CheckEmailScreen(
                     .fillMaxWidth()
                     .height(52.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Orange)
+                colors = ButtonDefaults.buttonColors(containerColor = MainColor)
             ) {
                 Text(
                     text = "Go to Login",
@@ -115,7 +111,7 @@ fun CheckEmailScreen(
             }
 
             TextButton(onClick = { authViewModel.resendVerificationEmail() }) {
-                Text("Resend verification email", color = Orange, fontSize = 14.sp)
+                Text("Resend verification email", color = MainColor, fontSize = 14.sp)
             }
         }
     }

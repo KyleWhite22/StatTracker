@@ -1,7 +1,8 @@
-package com.mobileapps.stattracker
+package com.mobileapps.stattracker.viewmodels
 
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -60,7 +61,7 @@ class AuthViewModel : ViewModel() {
                 val user = result.user ?: return@addOnSuccessListener
 
                 // Set display name to username
-                val profileUpdate = com.google.firebase.auth.UserProfileChangeRequest.Builder()
+                val profileUpdate = UserProfileChangeRequest.Builder()
                     .setDisplayName(username)
                     .build()
 
@@ -70,7 +71,7 @@ class AuthViewModel : ViewModel() {
                 }
 
                 // Save to Firestore
-                val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                val db = FirebaseFirestore.getInstance()
                 db.collection("users").document(user.uid).set(
                     mapOf("username" to username, "email" to email)
                 )

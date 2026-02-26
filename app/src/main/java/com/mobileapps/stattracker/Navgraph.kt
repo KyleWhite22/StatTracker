@@ -41,11 +41,18 @@ fun NavGraph(
         // ── Home (groups list) ────────────────────────────────────────────────
         composable(NavRoutes.Home.route) {
             HomeScreen(
-                onGroupClick = { groupId ->
-                    navController.navigate(NavRoutes.GroupView.createRoute(groupId))
-                }
+                onGroupClick = {
+                    navController.navigate(NavRoutes.CreateGroup.route)
+                },
+                onLogOut = {navController.navigate(NavRoutes.Login.route)}
             )
         }
+
+        composable(NavRoutes.CreateGroup.route) {
+            CreateGroupScreen {  }
+        }
+
+
 
         composable(
             route = NavRoutes.CheckEmail.route,

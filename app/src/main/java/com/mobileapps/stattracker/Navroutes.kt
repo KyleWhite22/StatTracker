@@ -16,4 +16,6 @@ sealed class NavRoutes(val route: String) {
     object CheckEmail : NavRoutes("check_email/{email}") {
         fun createRoute(email: String) = "check_email/$email"
     }
+
+    object CreateGroup : NavRoutes("create group")
 }

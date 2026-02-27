@@ -23,9 +23,9 @@ fun NavGraph(
     NavHost(
         navController = navController,
         //use this for debugging:
-        startDestination = NavRoutes.Home.route
+        //startDestination = NavRoutes.Home.route
         //otherwise:
-        //startDestination = NavRoutes.Login.route
+        startDestination = NavRoutes.Login.route
 
     ) {
 

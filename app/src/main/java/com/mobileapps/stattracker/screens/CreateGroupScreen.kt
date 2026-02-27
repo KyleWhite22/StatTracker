@@ -1,5 +1,6 @@
 package com.mobileapps.stattracker.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,8 @@ import com.mobileapps.stattracker.ui.theme.MainColor
 fun CreateGroupScreen(
     onSubmitClick: (name: String, location: String) -> Unit,
 ) {
+    Log.d("Lifecycle", "Create Group composed")
+
     var groupName by remember { mutableStateOf("") }
     var groupLocation by remember { mutableStateOf("") }
     var groupPlayerNumber by remember { mutableStateOf("") }

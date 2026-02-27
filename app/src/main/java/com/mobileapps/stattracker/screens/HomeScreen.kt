@@ -1,5 +1,6 @@
 package com.mobileapps.stattracker.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -25,6 +26,7 @@ fun HomeScreen(
     onLogOut: () -> Unit,
     groups: List<Group>,
 ) {
+    Log.d("Lifecycle", "Home composed")
     Column(
         modifier = Modifier
             .fillMaxSize()

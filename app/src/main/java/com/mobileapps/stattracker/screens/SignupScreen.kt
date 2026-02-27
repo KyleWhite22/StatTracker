@@ -1,5 +1,6 @@
 package com.mobileapps.stattracker.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +27,7 @@ fun SignUpScreen(
     onGoToLogin: () -> Unit,
     authViewModel: AuthViewModel = viewModel()
 ) {
+    Log.d("Lifecycle", "SignUp composed")
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

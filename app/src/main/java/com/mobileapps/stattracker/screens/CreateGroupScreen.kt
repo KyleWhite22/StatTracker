@@ -40,7 +40,6 @@ fun CreateGroupScreen(
 
     var groupName by remember { mutableStateOf("") }
     var groupLocation by remember { mutableStateOf("") }
-    var groupPlayerNumber by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -86,21 +85,6 @@ fun CreateGroupScreen(
                 value = groupLocation,
                 onValueChange = { groupLocation = it },
                 label = { Text("Location", color = TextGray) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MainColor,
-                    unfocusedBorderColor = TextGray,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    cursorColor = MainColor
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = groupPlayerNumber,
-                onValueChange = { groupPlayerNumber = it },
-                label = { Text("Number of Players", color = TextGray) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 colors = OutlinedTextFieldDefaults.colors(

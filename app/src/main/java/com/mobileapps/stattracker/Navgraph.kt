@@ -76,7 +76,10 @@ fun NavGraph(
             HomeScreen(
                 onGroupClick = { navController.navigate(NavRoutes.CreateGroup.route) },
                 onLogOut = { navController.navigate(NavRoutes.Login.route) },
-                groups = groupViewModel.groups
+                groups = groupViewModel.groups,
+                onGroupDetailsClick = { groupId ->
+                    navController.navigate(NavRoutes.GroupDetails.createRoute(groupId))
+                }
             )
         }
 
@@ -88,6 +91,19 @@ fun NavGraph(
                         navController.navigate(NavRoutes.Home.route)
                     }
                 }
+            )
+        }
+
+        //Group Details
+        composable(
+            route = NavRoutes.GroupDetails.route,
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getString("groupId") ?: ""
+            GroupScreen(
+                groupId = groupId,
+                onBackClick = { navController.popBackStack() },
+                groupViewModel = groupViewModel
             )
         }
     }

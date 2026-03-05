@@ -26,7 +26,6 @@ fun NavGraph(
         //startDestination = NavRoutes.Home.route
         //otherwise:
         startDestination = NavRoutes.Login.route
-
     ) {
 
         //Authentication

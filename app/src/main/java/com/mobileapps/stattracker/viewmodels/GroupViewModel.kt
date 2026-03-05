@@ -22,6 +22,31 @@ class GroupViewModel : ViewModel() {
                 groups = result.documents.mapNotNull { it.toObject(Group::class.java) }
             }
     }
+
+    fun loadGroupById(groupId: String, onResult: (Group?) -> Unit) {
+        db.collection("groups").document(groupId).get()
+            .addOnSuccessListener { document ->
+                onResult(document.toObject(Group::class.java))
+            }
+            .addOnFailureListener {
+                onResult(null)
+            }
+    }
+
+    fun addMemberToGroup(groupId: String, memberName: String, onSuccess: () -> Unit) {
+        val docRef = db.collection("groups").document(groupId)
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(docRef)
+            val currentMembers = snapshot.get("members") as? List<String> ?: emptyList()
+            if (!currentMembers.contains(memberName)) {
+                val newMembers = currentMembers + memberName
+                transaction.update(docRef, "members", newMembers)
+            }
+        }.addOnSuccessListener {
+            onSuccess()
+        }
+    }
+
     fun createGroup(name: String, location: String, onSuccess: () -> Unit) {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
         val docRef = db.collection("groups").document()
@@ -29,7 +54,8 @@ class GroupViewModel : ViewModel() {
             id = docRef.id,
             ownerID = currentUserId,
             name = name,
-            location = location
+            location = location,
+            members = emptyList()
         )
         docRef.set(group)
             .addOnSuccessListener {

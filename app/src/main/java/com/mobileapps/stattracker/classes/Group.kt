@@ -7,4 +7,5 @@ data class Group(
     val ownerID: String = "",
     val name: String = "",
     val location: String = "",
+    val members: List<String> = emptyList()
 )

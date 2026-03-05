@@ -1,6 +1,7 @@
 package com.mobileapps.stattracker.screens
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,12 +11,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mobileapps.stattracker.R
 import com.mobileapps.stattracker.viewmodels.AuthState
 import com.mobileapps.stattracker.viewmodels.AuthViewModel
 import com.mobileapps.stattracker.ui.theme.BackgroundColor
@@ -54,8 +57,16 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.Center
         ) {
+            Image(
+                painter = painterResource(id = R.drawable.pickuplogo),
+                contentDescription = "App Logo",
+                modifier = Modifier.size(120.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Text(
                 text = "Pick UP↑",
                 color = MainColor,
@@ -64,7 +75,7 @@ fun LoginScreen(
                 letterSpacing = 1.sp
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
                 value = email,
@@ -72,15 +83,18 @@ fun LoginScreen(
                 label = { Text("Email", color = TextGray) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MainColor,
-                    unfocusedBorderColor = TextGray,
+                    unfocusedBorderColor = TextGray.copy(alpha = 0.5f),
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
                     cursorColor = MainColor
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
                 value = password,
@@ -89,9 +103,10 @@ fun LoginScreen(
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MainColor,
-                    unfocusedBorderColor = TextGray,
+                    unfocusedBorderColor = TextGray.copy(alpha = 0.5f),
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
                     cursorColor = MainColor
@@ -100,23 +115,25 @@ fun LoginScreen(
             )
 
             if (authState is AuthState.Error) {
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Account username/password wrong or doesn't exist",
+                    text = "Invalid email or password",
                     color = Color.Red,
                     fontSize = 13.sp
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = { authViewModel.login(email, password) },
                 enabled = authState !is AuthState.Loading,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MainColor)
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MainColor),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
             ) {
                 if (authState is AuthState.Loading) {
                     CircularProgressIndicator(
@@ -127,12 +144,14 @@ fun LoginScreen(
                 } else {
                     Text(
                         text = "Log In",
-                        fontSize = 16.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Don't have an account? ", color = TextGray, fontSize = 14.sp)

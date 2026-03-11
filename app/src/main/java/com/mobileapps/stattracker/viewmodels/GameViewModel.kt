@@ -1,5 +1,6 @@
 package com.mobileapps.stattracker.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -60,6 +61,9 @@ class GameViewModel : ViewModel() {
                 .addOnSuccessListener { result ->
                     finishedGames = result.documents.mapNotNull { it.toObject(Game::class.java) }
                 }
+                .addOnFailureListener { e ->
+                    Log.e("GameViewModel", "loadFinishedGames failed: ${e.message}")
+                }
         } else {
             db.collection("groups").whereEqualTo("ownerID", userId).get().addOnSuccessListener { groupDocs ->
                 val groupIds = groupDocs.documents.map { it.id }
@@ -71,6 +75,9 @@ class GameViewModel : ViewModel() {
                         .get()
                         .addOnSuccessListener { result ->
                             finishedGames = result.documents.mapNotNull { it.toObject(Game::class.java) }
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("GameViewModel", "loadFinishedGames failed: ${e.message}")
                         }
                 } else {
                     finishedGames = emptyList()

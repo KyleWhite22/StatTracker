@@ -74,14 +74,19 @@ fun CreateGroupScreen(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MainColor,
                     unfocusedBorderColor = Color.Gray,
+                label = { Text("Location", color = TextGray) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MainColor,
+                    unfocusedBorderColor = TextGray,
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
                     cursorColor = MainColor
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
-            
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Button(
                 onClick = { if (groupName.isNotBlank() && groupLocation.isNotBlank()) onSubmitClick(groupName, groupLocation) },

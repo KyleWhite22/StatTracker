@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -29,7 +30,8 @@ fun HomeScreen(
     onGroupClick: () -> Unit,
     onLogOut: () -> Unit,
     groups: List<Group>,
-    onGroupDetailsClick: (String) -> Unit
+    onGroupDetailsClick: (String) -> Unit,
+    onViewGamesClick: () -> Unit
 ) {
     Log.d("Lifecycle", "Home composed")
     Column(
@@ -57,18 +59,34 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Button(
-            onClick = onGroupClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MainColor),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
-        ) {
-            Icon(Icons.Default.Add, contentDescription = null, tint = Color.Black)
-            Spacer(Modifier.width(8.dp))
-            Text("Create Group", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Button(
+                onClick = onGroupClick,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MainColor),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null, tint = Color.Black)
+                Spacer(Modifier.width(8.dp))
+                Text("Group", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+            }
+
+            Button(
+                onClick = onViewGamesClick,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = SurfaceColor),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+            ) {
+                Icon(Icons.AutoMirrored.Filled.List, contentDescription = null, tint = MainColor)
+                Spacer(Modifier.width(8.dp))
+                Text("Games", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MainColor)
+            }
         }
 
         Spacer(modifier = Modifier.height(32.dp))

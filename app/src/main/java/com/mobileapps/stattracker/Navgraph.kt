@@ -9,22 +9,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.google.firebase.auth.FirebaseAuth
 import com.mobileapps.stattracker.screens.*
 import com.mobileapps.stattracker.viewmodels.GroupViewModel
-import com.mobileapps.stattracker.classes.*
+import com.mobileapps.stattracker.viewmodels.GameViewModel
 
 @Composable
 fun NavGraph(
     navController: NavHostController = rememberNavController()
 ) {
     val groupViewModel: GroupViewModel = viewModel()
+    val gameViewModel: GameViewModel = viewModel()
 
     NavHost(
         navController = navController,
-        //use this for debugging:
-        //startDestination = NavRoutes.Home.route
-        //otherwise:
         startDestination = NavRoutes.Login.route
     ) {
 
@@ -79,6 +76,9 @@ fun NavGraph(
                 groups = groupViewModel.groups,
                 onGroupDetailsClick = { groupId ->
                     navController.navigate(NavRoutes.GroupDetails.createRoute(groupId))
+                },
+                onViewGamesClick = {
+                    navController.navigate(NavRoutes.Games.createRoute(NavRoutes.Games.ALL_GAMES))
                 }
             )
         }
@@ -103,7 +103,80 @@ fun NavGraph(
             GroupScreen(
                 groupId = groupId,
                 onBackClick = { navController.popBackStack() },
+                onStartGameClick = { id ->
+                    navController.navigate(NavRoutes.CreateGame.createRoute(id))
+                },
+                onViewPastGamesClick = { id ->
+                    navController.navigate(NavRoutes.Games.createRoute(id))
+                },
                 groupViewModel = groupViewModel
+            )
+        }
+
+        //Create Game
+        composable(
+            route = NavRoutes.CreateGame.route,
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getString("groupId") ?: ""
+            CreateGameScreen(
+                groupId = groupId,
+                onBackClick = { navController.popBackStack() },
+                onStartGame = { settings, t1, t2 ->
+                    gameViewModel.startGame(groupId, settings, t1, t2) { gameId ->
+                        navController.navigate(NavRoutes.ActiveGame.createRoute(gameId)) {
+                            popUpTo(NavRoutes.GroupDetails.route) { inclusive = false }
+                        }
+                    }
+                },
+                groupViewModel = groupViewModel
+            )
+        }
+
+        //Active Game
+        composable(
+            route = NavRoutes.ActiveGame.route,
+            arguments = listOf(navArgument("gameId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
+            ActiveGameScreen(
+                gameId = gameId,
+                onGameEnded = { id ->
+                    navController.navigate(NavRoutes.PostGameSummary.createRoute(id)) {
+                        popUpTo(NavRoutes.ActiveGame.route) { inclusive = true }
+                    }
+                },
+                gameViewModel = gameViewModel
+            )
+        }
+
+        //Post Game Summary
+        composable(
+            route = NavRoutes.PostGameSummary.route,
+            arguments = listOf(navArgument("gameId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
+            PostGameSummaryScreen(
+                gameId = gameId,
+                onDoneClick = {
+                    navController.navigate(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = true }
+                    }
+                },
+                gameViewModel = gameViewModel
+            )
+        }
+
+        //Past Games
+        composable(
+            route = NavRoutes.Games.route,
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getString("groupId") ?: ""
+            GamesScreen(
+                groupId = groupId,
+                onBackClick = { navController.popBackStack() },
+                gameViewModel = gameViewModel
             )
         }
     }

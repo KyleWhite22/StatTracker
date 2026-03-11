@@ -7,7 +7,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,6 +30,8 @@ import com.mobileapps.stattracker.viewmodels.GroupViewModel
 fun GroupScreen(
     groupId: String,
     onBackClick: () -> Unit,
+    onStartGameClick: (String) -> Unit,
+    onViewPastGamesClick: (String) -> Unit,
     groupViewModel: GroupViewModel = viewModel()
 ) {
     var group by remember { mutableStateOf<Group?>(null) }
@@ -84,6 +88,38 @@ fun GroupScreen(
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Button(
+                        onClick = { onStartGameClick(groupId) },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(56.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = MainColor),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                    ) {
+                        Icon(Icons.Default.PlayArrow, contentDescription = null, tint = Color.Black)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Start Game", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                    }
+
+                    Button(
+                        onClick = { onViewPastGamesClick(groupId) },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(56.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = SurfaceColor),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.List, contentDescription = null, tint = MainColor)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Past Games", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MainColor)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
                     "Members",

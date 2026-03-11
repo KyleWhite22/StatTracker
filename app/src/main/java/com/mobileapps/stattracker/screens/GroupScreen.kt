@@ -75,17 +75,7 @@ fun GroupScreen(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = SurfaceColor)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text("Location: ${group?.location}", color = Color.White, fontSize = 18.sp)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Owner ID: ${group?.ownerID}", color = Color.Gray, fontSize = 14.sp)
-                    }
-                }
+
 
                 Spacer(modifier = Modifier.height(24.dp))
 

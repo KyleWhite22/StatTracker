@@ -65,14 +65,14 @@ fun CheckEmailScreen(
             ) {
                 Text(
                     text = email,
-                    color = Color.White,
+                    color = Color.Black,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium
                 )
             }
 
             Text(
-                text = "Click the link in the email to verify your account, then come back and log in.",
+                text = "Click link to verify account, email may be in SPAM.",
                 color = TextGray,
                 fontSize = 13.sp,
                 textAlign = TextAlign.Center

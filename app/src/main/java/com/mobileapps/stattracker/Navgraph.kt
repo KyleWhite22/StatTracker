@@ -109,6 +109,9 @@ fun NavGraph(
                 onViewPastGamesClick = { id ->
                     navController.navigate(NavRoutes.Games.createRoute(id))
                 },
+                onDeleteGroupClick = {
+                    navController.navigate(NavRoutes.Home.route)
+                },
                 groupViewModel = groupViewModel,
                 gameViewModel = gameViewModel
             )
@@ -188,5 +191,7 @@ fun NavGraph(
                 gameViewModel = gameViewModel
             )
         }
+
+
     }
 }

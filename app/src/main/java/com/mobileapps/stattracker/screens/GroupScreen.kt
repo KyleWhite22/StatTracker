@@ -41,6 +41,7 @@ fun GroupScreen(
     onBackClick: () -> Unit,
     onStartGameClick: (String) -> Unit,
     onViewPastGamesClick: (String) -> Unit,
+    onDeleteGroupClick: () -> Unit,
     groupViewModel: GroupViewModel = viewModel(),
     gameViewModel: GameViewModel = viewModel()
 ) {
@@ -245,6 +246,32 @@ fun GroupScreen(
                         itemsIndexed(sortedLeaderboard) { index, (name, totals) ->
                             LeaderboardRow(rank = index + 1, name = name, totals = totals, sortBy = sortBy)
                         }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ){
+                    Button(
+                        onClick = {
+                            groupViewModel.deleteGroup(groupId) {
+                                onDeleteGroupClick()
+                            }
+                        },
+                        modifier = Modifier
+                            .height(52.dp)
+                            .width(250.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = MainColor),
+                        contentPadding = PaddingValues(horizontal = 16.dp)
+                    ) {
+                        Text("Delete Group", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                     }
                 }
             }

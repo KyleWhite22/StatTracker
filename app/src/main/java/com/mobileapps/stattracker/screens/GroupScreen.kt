@@ -203,15 +203,17 @@ fun GroupScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(horizontal = 20.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("#  Player", color = Color.Gray, fontSize = 11.sp, modifier = Modifier.weight(1f))
-                    listOf("W", "PTS", "REB", "BLK", "STL").forEach { col ->
+                    Row(modifier = Modifier.weight(1f)) {
+                        Spacer(modifier = Modifier.width(28.dp))
+                    }
+                    listOf("WIN", "PTS", "REB", "BLK", "STL").forEach { col ->
                         Text(
                             col,
                             color = if (
-                                (col == "W" && sortBy == SortStat.WINS) ||
+                                (col == "WIN" && sortBy == SortStat.WINS) ||
                                 (col == "PTS" && sortBy == SortStat.POINTS) ||
                                 (col == "REB" && sortBy == SortStat.REBOUNDS) ||
                                 (col == "BLK" && sortBy == SortStat.BLOCKS) ||

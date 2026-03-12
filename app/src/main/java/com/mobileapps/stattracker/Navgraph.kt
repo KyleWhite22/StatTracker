@@ -22,7 +22,7 @@ fun NavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.Home.route
+        startDestination = NavRoutes.Login.route
     ) {
 
         //Authentication

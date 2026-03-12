@@ -11,6 +11,7 @@ import com.google.firebase.firestore.Query
 import com.mobileapps.stattracker.classes.Game
 import com.mobileapps.stattracker.classes.GameSettings
 import com.mobileapps.stattracker.classes.PlayerGameStats
+import com.mobileapps.stattracker.classes.PlayerTotals
 import com.mobileapps.stattracker.classes.ScoringType
 
 class GameViewModel : ViewModel() {
@@ -130,4 +131,39 @@ class GameViewModel : ViewModel() {
                 onComplete(game.id) 
             }
     }
+
+    var leaderboard by mutableStateOf<Map<String, PlayerTotals>>(emptyMap())
+        private set
+
+    fun loadLeaderboard(groupId: String) {
+        db.collection("games")
+            .whereEqualTo("groupId", groupId)
+            .whereEqualTo("status", "FINISHED")
+            .get()
+            .addOnSuccessListener { result ->
+                val games = result.documents.mapNotNull { it.toObject(Game::class.java) }
+                val totals = mutableMapOf<String, PlayerTotals>()
+
+                games.forEach { game ->
+                    val winner = when {
+                        game.score1 > game.score2 -> game.team1
+                        game.score2 > game.score1 -> game.team2
+                        else -> emptyList()
+                    }
+                    game.playerStats.forEach { (name, stats) ->
+                        val current = totals.getOrDefault(name, PlayerTotals())
+                        totals[name] = current.copy(
+                            points = current.points + stats.points,
+                            rebounds = current.rebounds + stats.rebounds,
+                            blocks = current.blocks + stats.blocks,
+                            steals = current.steals + stats.steals,
+                            wins = current.wins + if (winner.contains(name)) 1 else 0,
+                            gamesPlayed = current.gamesPlayed + 1
+                        )
+                    }
+                }
+                leaderboard = totals
+            }
+    }
+
 }

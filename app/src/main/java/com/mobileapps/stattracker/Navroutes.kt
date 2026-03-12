@@ -18,12 +18,12 @@ sealed class NavRoutes(val route: String) {
         fun createRoute(groupId: String) = "create_game/$groupId"
     }
 
-    object ActiveGame : NavRoutes("active_game/{gameId}") {
-        fun createRoute(gameId: String) = "active_game/$gameId"
+    object ActiveGame : NavRoutes("active_game/{gameId}/{groupId}") {
+        fun createRoute(gameId: String, groupId: String) = "active_game/$gameId/$groupId"
     }
 
-    object PostGameSummary : NavRoutes("post_game_summary/{gameId}") {
-        fun createRoute(gameId: String) = "post_game_summary/$gameId"
+    object PostGameSummary : NavRoutes("post_game_summary/{gameId}/{groupId}") {
+        fun createRoute(gameId: String, groupId: String) = "post_game_summary/$gameId/$groupId"
     }
 
     object Games : NavRoutes("games/{groupId}") {

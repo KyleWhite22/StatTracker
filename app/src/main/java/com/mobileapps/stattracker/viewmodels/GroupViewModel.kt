@@ -47,6 +47,15 @@ class GroupViewModel : ViewModel() {
         }
     }
 
+    fun deleteGroup(groupId: String, onSuccess: () -> Unit) {
+        db.collection("groups").document(groupId)
+            .delete()
+            .addOnSuccessListener {
+                loadGroups()
+                onSuccess()
+            }
+    }
+
     fun createGroup(name: String, location: String, onSuccess: () -> Unit) {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
         val docRef = db.collection("groups").document()

@@ -22,7 +22,7 @@ fun NavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.Login.route
+        startDestination = NavRoutes.Home.route
     ) {
 
         //Authentication
@@ -109,7 +109,8 @@ fun NavGraph(
                 onViewPastGamesClick = { id ->
                     navController.navigate(NavRoutes.Games.createRoute(id))
                 },
-                groupViewModel = groupViewModel
+                groupViewModel = groupViewModel,
+                gameViewModel = gameViewModel
             )
         }
 
@@ -124,7 +125,7 @@ fun NavGraph(
                 onBackClick = { navController.popBackStack() },
                 onStartGame = { settings, t1, t2 ->
                     gameViewModel.startGame(groupId, settings, t1, t2) { gameId ->
-                        navController.navigate(NavRoutes.ActiveGame.createRoute(gameId)) {
+                        navController.navigate(NavRoutes.ActiveGame.createRoute(gameId, groupId)) {
                             popUpTo(NavRoutes.GroupDetails.route) { inclusive = false }
                         }
                     }
@@ -136,13 +137,17 @@ fun NavGraph(
         //Active Game
         composable(
             route = NavRoutes.ActiveGame.route,
-            arguments = listOf(navArgument("gameId") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("gameId") { type = NavType.StringType },
+                navArgument("groupId") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
             val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
+            val groupId = backStackEntry.arguments?.getString("groupId") ?: ""
             ActiveGameScreen(
                 gameId = gameId,
                 onGameEnded = { id ->
-                    navController.navigate(NavRoutes.PostGameSummary.createRoute(id)) {
+                    navController.navigate(NavRoutes.PostGameSummary.createRoute(id, groupId)) {
                         popUpTo(NavRoutes.ActiveGame.route) { inclusive = true }
                     }
                 },
@@ -153,14 +158,18 @@ fun NavGraph(
         //Post Game Summary
         composable(
             route = NavRoutes.PostGameSummary.route,
-            arguments = listOf(navArgument("gameId") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("gameId") { type = NavType.StringType },
+                navArgument("groupId") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
             val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
+            val groupId = backStackEntry.arguments?.getString("groupId") ?: ""
             PostGameSummaryScreen(
                 gameId = gameId,
                 onDoneClick = {
-                    navController.navigate(NavRoutes.Home.route) {
-                        popUpTo(NavRoutes.Home.route) { inclusive = true }
+                    navController.navigate(NavRoutes.GroupDetails.createRoute(groupId)) {
+                        popUpTo(NavRoutes.GroupDetails.route) { inclusive = true }
                     }
                 },
                 gameViewModel = gameViewModel

@@ -36,3 +36,12 @@ enum class WinCondition {
 enum class ScoringType {
     ONES_AND_TWOS, TWOS_AND_THREES
 }
+
+data class PlayerTotals(
+    val points: Int = 0,
+    val rebounds: Int = 0,
+    val blocks: Int = 0,
+    val steals: Int = 0,
+    val wins: Int = 0,
+    val gamesPlayed: Int = 0
+)

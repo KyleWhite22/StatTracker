@@ -55,6 +55,13 @@ class GroupViewModel : ViewModel() {
                 onSuccess()
             }
     }
+    fun renameGroup(groupId: String, newName: String, onSuccess: () -> Unit) {
+        db.collection("groups").document(groupId).update("name", newName)
+            .addOnSuccessListener {
+                loadGroups()
+                onSuccess()
+            }
+    }
 
     fun createGroup(name: String, location: String, onSuccess: () -> Unit) {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""

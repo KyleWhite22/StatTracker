@@ -20,6 +20,7 @@ import com.mobileapps.stattracker.ui.theme.MainColor
 @Composable
 fun CreateGroupScreen(
     onSubmitClick: (name: String, location: String) -> Unit,
+    onCancelClick: () -> Unit
 ) {
     Log.d("Lifecycle", "Create Group composed")
 
@@ -46,7 +47,7 @@ fun CreateGroupScreen(
                 fontSize = 32.sp,
                 fontWeight = FontWeight.ExtraBold,
             )
-            
+
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
@@ -64,7 +65,7 @@ fun CreateGroupScreen(
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
@@ -83,6 +84,7 @@ fun CreateGroupScreen(
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
+
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
@@ -99,6 +101,12 @@ fun CreateGroupScreen(
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextButton(onClick = onCancelClick) {
+                Text("Cancel", color = Color.Gray, fontSize = 16.sp)
             }
         }
     }

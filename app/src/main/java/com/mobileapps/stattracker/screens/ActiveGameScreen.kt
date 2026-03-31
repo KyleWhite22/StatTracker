@@ -1,5 +1,6 @@
 package com.mobileapps.stattracker.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -91,6 +92,14 @@ fun ActiveGameScreen(
                 // Stats Interface
                 Row(modifier = Modifier.weight(1f)) {
                     TeamStatList("Team 1", game.team1, gameViewModel)
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(2.dp)
+                            .background(MainColor.copy(alpha = 0.5f))
+                    )
+
                     Spacer(modifier = Modifier.width(8.dp))
                     TeamStatList("Team 2", game.team2, gameViewModel)
                 }

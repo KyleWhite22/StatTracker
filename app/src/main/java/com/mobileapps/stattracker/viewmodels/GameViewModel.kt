@@ -160,7 +160,7 @@ class GameViewModel : ViewModel() {
                             blocks = current.blocks + stats.blocks,
                             steals = current.steals + stats.steals,
                             wins = current.wins + if (winner.contains(name)) 1 else 0,
-                            gamesPlayed = current.gamesPlayed + 1
+                            losses = current.losses + if (winner.isNotEmpty() && !winner.contains(name)) 1 else 0,
                         )
                     }
                 }

@@ -144,25 +144,27 @@ fun PlayerStatCard(name: String, viewModel: GameViewModel) {
             Text(name, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                StatButton("PTS", { viewModel.logStat(name, "Points") })
-                StatButton("REB", { viewModel.logStat(name, "Rebounds") })
+                StatButton("1 PT", { viewModel.logPoints(name, 1) }, modifier = Modifier.weight(1f))
+                StatButton("2 PTS", { viewModel.logPoints(name, 2) }, modifier = Modifier.weight(1f))
+                StatButton("3 PTS", { viewModel.logPoints(name, 3) }, modifier = Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(4.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                StatButton("BLK", { viewModel.logStat(name, "Blocks") })
-                StatButton("STL", { viewModel.logStat(name, "Steals") })
+                StatButton("REB", { viewModel.logStat(name, "Rebounds") }, modifier = Modifier.weight(1f))
+                StatButton("BLK", { viewModel.logStat(name, "Blocks") }, modifier = Modifier.weight(1f))
+                StatButton("STL", { viewModel.logStat(name, "Steals") }, modifier = Modifier.weight(1f))
             }
         }
     }
 }
 
 @Composable
-fun StatButton(label: String, onClick: () -> Unit) {
+fun StatButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
         onClick = onClick,
         color = MainColor.copy(alpha = 0.15f),
         shape = RoundedCornerShape(4.dp),
-        modifier = Modifier.size(width = 40.dp, height = 30.dp)
+        modifier = modifier.height(30.dp)
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(label, color = MainColor, fontSize = 10.sp, fontWeight = FontWeight.Bold)

@@ -90,35 +90,37 @@ class GameViewModel : ViewModel() {
     fun logStat(playerName: String, statType: String) {
         val game = currentGame ?: return
         val currentStats = game.playerStats[playerName] ?: PlayerGameStats()
-        
+
         val newStats = when (statType) {
-            "Points" -> {
-                val pointsToAdd = if (game.settings.scoringType == ScoringType.ONES_AND_TWOS) 1 else 2
-                currentStats.copy(points = currentStats.points + pointsToAdd)
-            }
             "Rebounds" -> currentStats.copy(rebounds = currentStats.rebounds + 1)
             "Blocks" -> currentStats.copy(blocks = currentStats.blocks + 1)
             "Steals" -> currentStats.copy(steals = currentStats.steals + 1)
-            else -> currentStats
+            else -> return
         }
 
+        val updatedPlayerStats = game.playerStats.toMutableMap()
+        updatedPlayerStats[playerName] = newStats
+
+        db.collection("games").document(game.id).update("playerStats", updatedPlayerStats)
+    }
+    fun logPoints(playerName: String, points: Int) {
+        val game = currentGame ?: return
+        val currentStats = game.playerStats[playerName] ?: PlayerGameStats()
+        val newStats = currentStats.copy(points = currentStats.points + points)
+
         val isTeam1 = game.team1.contains(playerName)
-        val scoreUpdate = if (statType == "Points") {
-            val pointsToAdd = if (game.settings.scoringType == ScoringType.ONES_AND_TWOS) 1 else 2
-            if (isTeam1) Pair(game.score1 + pointsToAdd, game.score2)
-            else Pair(game.score1, game.score2 + pointsToAdd)
-        } else Pair(game.score1, game.score2)
+        val newScore1 = if (isTeam1) game.score1 + points else game.score1
+        val newScore2 = if (!isTeam1) game.score2 + points else game.score2
 
         val updatedPlayerStats = game.playerStats.toMutableMap()
         updatedPlayerStats[playerName] = newStats
 
         db.collection("games").document(game.id).update(
             "playerStats", updatedPlayerStats,
-            "score1", scoreUpdate.first,
-            "score2", scoreUpdate.second
+            "score1", newScore1,
+            "score2", newScore2
         )
     }
-
     fun togglePause() {
         val game = currentGame ?: return
         db.collection("games").document(game.id).update("isPaused", !game.isPaused)

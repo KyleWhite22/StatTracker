@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mobileapps.stattracker.classes.Group
 import com.mobileapps.stattracker.classes.PlayerTotals
@@ -50,6 +52,10 @@ fun GroupScreen(
     var isLoading by remember { mutableStateOf(true) }
     var sortBy by remember { mutableStateOf(SortStat.WINS) }
 
+    var menuExpanded by remember { mutableStateOf(false) }
+    var showRenameDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(groupId) {
         groupViewModel.loadGroupById(groupId) { fetchedGroup ->
             group = fetchedGroup
@@ -58,25 +64,143 @@ fun GroupScreen(
         gameViewModel.loadLeaderboard(groupId)
     }
 
-    val sortedLeaderboard = remember(gameViewModel.leaderboard, sortBy) {
-        gameViewModel.leaderboard.entries.sortedByDescending {
-            when (sortBy) {
-                SortStat.WINS -> it.value.wins
-                SortStat.POINTS -> it.value.points
-                SortStat.REBOUNDS -> it.value.rebounds
-                SortStat.BLOCKS -> it.value.blocks
-                SortStat.STEALS -> it.value.steals
+    val sortedLeaderboard = remember(gameViewModel.leaderboard, sortBy, group) {
+        gameViewModel.leaderboard.entries
+            .filter { group?.members?.contains(it.key) == true }
+            .sortedByDescending {
+                when (sortBy) {
+                    SortStat.WINS -> it.value.wins
+                    SortStat.POINTS -> it.value.points
+                    SortStat.REBOUNDS -> it.value.rebounds
+                    SortStat.BLOCKS -> it.value.blocks
+                    SortStat.STEALS -> it.value.steals
+                }
+            }
+    }
+
+    // Rename Dialog
+    if (showRenameDialog) {
+        var newName by remember { mutableStateOf(group?.name ?: "") }
+        Dialog(onDismissRequest = { showRenameDialog = false }) {
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = SurfaceColor)
+            ) {
+                Column(modifier = Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Text("Rename Group", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    OutlinedTextField(
+                        value = memberName,
+                        onValueChange = { memberName = it },
+                        label = { Text("Add player", color = Color.Gray, fontSize = 12.sp) },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(10.dp),
+                        singleLine = true,
+                        textStyle = LocalTextStyle.current.copy(fontSize = 13.sp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MainColor,
+                            unfocusedBorderColor = Color.Gray,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            cursorColor = MainColor
+                        )
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        TextButton(
+                            onClick = { showRenameDialog = false },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Cancel", color = Color.Gray)
+                        }
+                        Button(
+                            onClick = {
+                                if (newName.isNotBlank()) {
+                                    groupViewModel.renameGroup(groupId, newName) {
+                                        groupViewModel.loadGroupById(groupId) { group = it }
+                                    }
+                                    showRenameDialog = false
+                                }
+                            },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColors(containerColor = MainColor),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text("Save", color = Color.Black, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
             }
         }
+    }
+
+    // Delete Confirmation Dialog
+    if (showDeleteConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmDialog = false },
+            containerColor = SurfaceColor,
+            title = { Text("Delete Group", color = Color.White, fontWeight = FontWeight.Bold) },
+            text = { Text("Are you sure you want to delete this group? This cannot be undone.", color = Color.Gray) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        groupViewModel.deleteGroup(groupId) { onDeleteGroupClick() }
+                        showDeleteConfirmDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("Delete", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirmDialog = false }) {
+                    Text("Cancel", color = Color.Gray)
+                }
+            }
+        )
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(group?.name ?: "Loading...", color = MainColor, fontWeight = FontWeight.Bold) },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(group?.name ?: "Loading...", color = MainColor, fontWeight = FontWeight.Bold)
+                        if (group?.location?.isNotBlank() == true) {
+                            Text(group?.location ?: "", color = Color.Gray, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
+                        }
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MainColor)
+                    }
+                },
+                actions = {
+                    Box {
+                        IconButton(onClick = { menuExpanded = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "Options", tint = MainColor)
+                        }
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false },
+                            containerColor = SurfaceColor
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Rename Group", color = Color.White) },
+                                onClick = {
+                                    menuExpanded = false
+                                    showRenameDialog = true
+                                }
+                            )
+                            HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+                            DropdownMenuItem(
+                                text = { Text("Delete Group", color = Color.Red) },
+                                onClick = {
+                                    menuExpanded = false
+                                    showDeleteConfirmDialog = true
+                                }
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = BackgroundColor)
@@ -136,10 +260,9 @@ fun GroupScreen(
                         value = memberName,
                         onValueChange = { memberName = it },
                         label = { Text("Add player", color = Color.Gray, fontSize = 12.sp) },
-                        modifier = Modifier.weight(1f).height(52.dp),
+                        modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(10.dp),
                         singleLine = true,
-                        textStyle = LocalTextStyle.current.copy(fontSize = 13.sp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MainColor,
                             unfocusedBorderColor = Color.Gray,
@@ -158,10 +281,10 @@ fun GroupScreen(
                                 }
                             }
                         },
-                        modifier = Modifier.height(52.dp),
+                        modifier = Modifier,
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MainColor),
-                        contentPadding = PaddingValues(horizontal = 16.dp)
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp)
                     ) {
                         Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.Black, modifier = Modifier.size(20.dp))
                     }
@@ -246,32 +369,6 @@ fun GroupScreen(
                         itemsIndexed(sortedLeaderboard) { index, (name, totals) ->
                             LeaderboardRow(rank = index + 1, name = name, totals = totals, sortBy = sortBy)
                         }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ){
-                    Button(
-                        onClick = {
-                            groupViewModel.deleteGroup(groupId) {
-                                onDeleteGroupClick()
-                            }
-                        },
-                        modifier = Modifier
-                            .height(52.dp)
-                            .width(250.dp),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = MainColor),
-                        contentPadding = PaddingValues(horizontal = 16.dp)
-                    ) {
-                        Text("Delete Group", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                     }
                 }
             }

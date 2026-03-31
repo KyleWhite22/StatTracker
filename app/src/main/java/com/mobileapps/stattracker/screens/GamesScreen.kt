@@ -22,6 +22,7 @@ import com.mobileapps.stattracker.ui.theme.BackgroundColor
 import com.mobileapps.stattracker.ui.theme.MainColor
 import com.mobileapps.stattracker.ui.theme.SurfaceColor
 import com.mobileapps.stattracker.viewmodels.GameViewModel
+import com.mobileapps.stattracker.viewmodels.GroupViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.foundation.background
@@ -29,24 +30,44 @@ import androidx.compose.foundation.clickable
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.style.TextAlign
 import com.mobileapps.stattracker.classes.PlayerGameStats
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GamesScreen(
     groupId: String?,
     onBackClick: () -> Unit,
-    gameViewModel: GameViewModel = viewModel()
+    gameViewModel: GameViewModel = viewModel(),
+    groupViewModel: GroupViewModel = viewModel()
 ) {
     Log.d("Lifecycle", "Games composed")
     val finishedGames = gameViewModel.finishedGames
+    var groupNames by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
 
     LaunchedEffect(groupId) {
         gameViewModel.loadFinishedGames(groupId)
     }
 
+    LaunchedEffect(finishedGames) {
+        val ids = finishedGames.map { it.groupId }.distinct()
+        ids.forEach { id ->
+            groupViewModel.loadGroupById(id) { group ->
+                if (group != null) {
+                    groupNames = groupNames + (id to group.name)
+                }
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (groupId == null || groupId == "all") "All Past Games" else "Group Games", color = MainColor, fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        if (groupId == null || groupId == "all") "All Past Games" else "Group Games",
+                        color = MainColor,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MainColor)
@@ -70,7 +91,7 @@ fun GamesScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(finishedGames) { game ->
-                    GameResultCard(game)
+                    GameResultCard(game = game, groupName = groupNames[game.groupId] ?: "")
                 }
             }
         }
@@ -78,8 +99,8 @@ fun GamesScreen(
 }
 
 @Composable
-fun GameResultCard(game: Game) {
-    val sdf = SimpleDateFormat("MMM dd, yyyy - HH:mm", Locale.getDefault())
+fun GameResultCard(game: Game, groupName: String) {
+    val sdf = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
     val dateString = sdf.format(Date(game.date))
     var expanded by remember { mutableStateOf(false) }
 
@@ -91,7 +112,14 @@ fun GameResultCard(game: Game) {
         colors = CardDefaults.cardColors(containerColor = SurfaceColor)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(dateString, color = Color.Gray, fontSize = 12.sp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(groupName, color = MainColor, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                Text(dateString, color = Color.Gray, fontSize = 12.sp)
+            }
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -102,14 +130,24 @@ fun GameResultCard(game: Game) {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("Team 1", color = Color.White, fontSize = 14.sp)
-                    Text("${game.score1}", color = if (game.score1 > game.score2) MainColor else Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        "${game.score1}",
+                        color = if (game.score1 > game.score2) MainColor else Color.White,
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
 
                 Text("VS", color = Color.Gray, fontWeight = FontWeight.ExtraBold)
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("Team 2", color = Color.White, fontSize = 14.sp)
-                    Text("${game.score2}", color = if (game.score2 > game.score1) MainColor else Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        "${game.score2}",
+                        color = if (game.score2 > game.score1) MainColor else Color.White,
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
 
@@ -119,13 +157,9 @@ fun GameResultCard(game: Game) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-
-            // Expanded player stats
             if (expanded) {
                 Spacer(modifier = Modifier.height(12.dp))
-                Spacer(modifier = Modifier.height(12.dp))
 
-                // Header row
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Player", color = Color.Gray, fontSize = 12.sp, modifier = Modifier.weight(1f))
                     listOf("PTS", "REB", "BLK", "STL").forEach {
@@ -157,13 +191,18 @@ fun GameResultCard(game: Game) {
                             Text(playerName, color = Color.White, fontSize = 13.sp)
                         }
                         listOf(stats.points, stats.rebounds, stats.blocks, stats.steals).forEach { value ->
-                            Text("$value", color = Color.White, fontSize = 13.sp, modifier = Modifier.width(36.dp), textAlign = TextAlign.Center)
+                            Text(
+                                "$value",
+                                color = Color.White,
+                                fontSize = 13.sp,
+                                modifier = Modifier.width(36.dp),
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                 }
             }
 
-            // Tap hint
             Text(
                 if (expanded) "▲ collapse" else "▼ tap to expand",
                 color = Color.White,

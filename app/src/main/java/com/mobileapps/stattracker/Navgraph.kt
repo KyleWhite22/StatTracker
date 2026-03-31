@@ -23,6 +23,7 @@ fun NavGraph(
     NavHost(
         navController = navController,
         startDestination = NavRoutes.Login.route
+        //startDestination = NavRoutes.Home.route
     ) {
 
         //Authentication
@@ -90,7 +91,8 @@ fun NavGraph(
                     groupViewModel.createGroup(name, location) {
                         navController.navigate(NavRoutes.Home.route)
                     }
-                }
+                },
+                onCancelClick = { navController.popBackStack() }
             )
         }
 

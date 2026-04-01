@@ -73,9 +73,15 @@ fun PostGameSummaryScreen(
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("${game?.score1}", color = if ((game?.score1 ?: 0) > (game?.score2 ?: 0)) MainColor else Color.White, fontSize = 48.sp, fontWeight = FontWeight.Bold)
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("TEAM 1", color = Color.White, fontSize = 12.sp)
+                                Text("${game?.score1}", color = if ((game?.score1 ?: 0) > (game?.score2 ?: 0)) MainColor else Color.White, fontSize = 48.sp, fontWeight = FontWeight.Bold)
+                            }
                             Text("-", color = Color.Gray, fontSize = 32.sp)
-                            Text("${game?.score2}", color = if ((game?.score2 ?: 0) > (game?.score1 ?: 0)) MainColor else Color.White, fontSize = 48.sp, fontWeight = FontWeight.Bold)
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("TEAM 2", color = Color.White, fontSize = 12.sp)
+                                Text("${game?.score2}", color = if ((game?.score2 ?: 0) > (game?.score1 ?: 0)) MainColor else Color.White, fontSize = 48.sp, fontWeight = FontWeight.Bold)
+                            }
                         }
                     }
                 }
@@ -90,8 +96,24 @@ fun PostGameSummaryScreen(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    val allPlayers = (game?.team1 ?: emptyList()) + (game?.team2 ?: emptyList())
-                    items(allPlayers) { playerName ->
+                    item {
+                        Text("Team 1", color = MainColor, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    }
+                    items(game?.team1 ?: emptyList()) { playerName ->
+                        val stats = game?.playerStats?.get(playerName) ?: PlayerGameStats()
+                        StatSummaryCard(playerName, stats)
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        HorizontalDivider(color = MainColor.copy(alpha = 0.5f), thickness = 2.dp)
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
+
+                    item {
+                        Text("Team 2", color = MainColor, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    }
+                    items(game?.team2 ?: emptyList()) { playerName ->
                         val stats = game?.playerStats?.get(playerName) ?: PlayerGameStats()
                         StatSummaryCard(playerName, stats)
                     }

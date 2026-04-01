@@ -126,8 +126,8 @@ fun CreateGameScreen(
 
             // Team Selection
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                TeamColumn("Team 1", team1, { team1 = it }, group?.members ?: emptyList())
-                TeamColumn("Team 2", team2, { team2 = it }, group?.members ?: emptyList())
+                TeamColumn("Team 1", team1, team2, { team1 = it }, group?.members ?: emptyList())
+                TeamColumn("Team 2", team2, team1, { team2 = it }, group?.members ?: emptyList())
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -159,8 +159,10 @@ fun CreateGameScreen(
 }
 
 @Composable
-fun TeamColumn(label: String, team: List<String>, onUpdate: (List<String>) -> Unit, allMembers: List<String>) {
+fun TeamColumn(label: String, team: List<String>, otherTeam: List<String>, onUpdate: (List<String>) -> Unit, allMembers: List<String>) {
     var expanded by remember { mutableStateOf(false) }
+    val availableMembers = allMembers.filter { !team.contains(it) && !otherTeam.contains(it) }
+
     Column(modifier = Modifier.width(150.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(label, color = MainColor, fontWeight = FontWeight.Bold)
         Box(
@@ -172,7 +174,19 @@ fun TeamColumn(label: String, team: List<String>, onUpdate: (List<String>) -> Un
         ) {
             LazyColumn {
                 items(team) { member ->
-                    Text(member, color = Color.White, modifier = Modifier.padding(4.dp).clickable { onUpdate(team - member) })
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(member, color = Color.White, fontSize = 13.sp, modifier = Modifier.weight(1f))
+                        Text(
+                            "✕",
+                            color = Color.White,
+                            fontSize = 12.sp,
+                            modifier = Modifier.clickable { onUpdate(team - member) }.padding(4.dp)
+                        )
+                    }
                 }
             }
         }
@@ -180,11 +194,11 @@ fun TeamColumn(label: String, team: List<String>, onUpdate: (List<String>) -> Un
             Text("Add", fontSize = 12.sp)
         }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            allMembers.forEach { member ->
+            availableMembers.forEach { member ->
                 DropdownMenuItem(
                     text = { Text(member) },
                     onClick = {
-                        if (!team.contains(member)) onUpdate(team + member)
+                        onUpdate(team + member)
                         expanded = false
                     }
                 )

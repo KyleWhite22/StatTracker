@@ -33,7 +33,7 @@ import com.mobileapps.stattracker.viewmodels.GameViewModel
 import com.mobileapps.stattracker.viewmodels.GroupViewModel
 
 enum class SortStat(val label: String) {
-    WINS("Wins"), POINTS("Points"), REBOUNDS("Rebounds"), BLOCKS("Blocks"), STEALS("Steals")
+    WINS("Wins"), WIN_PCT("Win%"), POINTS("Points"), REBOUNDS("Rebounds"), BLOCKS("Blocks"), STEALS("Steals")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,11 +69,12 @@ fun GroupScreen(
             .filter { group?.members?.contains(it.key) == true }
             .sortedByDescending {
                 when (sortBy) {
-                    SortStat.WINS -> it.value.wins
-                    SortStat.POINTS -> it.value.points
-                    SortStat.REBOUNDS -> it.value.rebounds
-                    SortStat.BLOCKS -> it.value.blocks
-                    SortStat.STEALS -> it.value.steals
+                    SortStat.WINS -> it.value.wins.toFloat()
+                    SortStat.WIN_PCT -> it.value.winPct
+                    SortStat.POINTS -> it.value.points.toFloat()
+                    SortStat.REBOUNDS -> it.value.rebounds.toFloat()
+                    SortStat.BLOCKS -> it.value.blocks.toFloat()
+                    SortStat.STEALS -> it.value.steals.toFloat()
                 }
             }
     }
@@ -334,11 +335,12 @@ fun GroupScreen(
                     Row(modifier = Modifier.weight(1f)) {
                         Spacer(modifier = Modifier.width(28.dp))
                     }
-                    listOf("WIN", "PTS", "REB", "BLK", "STL").forEach { col ->
+                    listOf("WIN", "WIN%", "PTS", "REB", "BLK", "STL").forEach { col ->
                         Text(
                             col,
                             color = if (
                                 (col == "WIN" && sortBy == SortStat.WINS) ||
+                                (col == "WIN%" && sortBy == SortStat.WIN_PCT) ||
                                 (col == "PTS" && sortBy == SortStat.POINTS) ||
                                 (col == "REB" && sortBy == SortStat.REBOUNDS) ||
                                 (col == "BLK" && sortBy == SortStat.BLOCKS) ||
@@ -401,14 +403,16 @@ fun LeaderboardRow(rank: Int, name: String, totals: PlayerTotals, sortBy: SortSt
                 Text(name, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
             }
             listOf(
-                Pair(totals.wins, SortStat.WINS),
-                Pair(totals.points, SortStat.POINTS),
-                Pair(totals.rebounds, SortStat.REBOUNDS),
-                Pair(totals.blocks, SortStat.BLOCKS),
-                Pair(totals.steals, SortStat.STEALS)
+                Pair(totals.wins.toFloat(), SortStat.WINS),
+                Pair(totals.winPct, SortStat.WIN_PCT),
+                Pair(totals.points.toFloat(), SortStat.POINTS),
+                Pair(totals.rebounds.toFloat(), SortStat.REBOUNDS),
+                Pair(totals.blocks.toFloat(), SortStat.BLOCKS),
+                Pair(totals.steals.toFloat(), SortStat.STEALS)
             ).forEach { (value, stat) ->
+                val display = if (stat == SortStat.WIN_PCT) "${(value * 100).toInt()}%" else "${value.toInt()}"
                 Text(
-                    "$value",
+                    display,
                     color = if (sortBy == stat) MainColor else Color.White,
                     fontSize = 13.sp,
                     fontWeight = if (sortBy == stat) FontWeight.Bold else FontWeight.Normal,

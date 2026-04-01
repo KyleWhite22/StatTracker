@@ -38,10 +38,13 @@ enum class ScoringType {
 }
 
 data class PlayerTotals(
+    val wins: Int = 0,
     val points: Int = 0,
     val rebounds: Int = 0,
     val blocks: Int = 0,
     val steals: Int = 0,
-    val wins: Int = 0,
-    val gamesPlayed: Int = 0
-)
+    val losses: Int = 0
+) {
+    val winPct: Float
+        get() = if (wins + losses == 0) 0f else wins.toFloat() / (wins + losses)
+}

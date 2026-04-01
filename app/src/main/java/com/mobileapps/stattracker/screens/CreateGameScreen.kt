@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -41,6 +43,7 @@ fun CreateGameScreen(
     var team1 by remember { mutableStateOf<List<String>>(emptyList()) }
     var team2 by remember { mutableStateOf<List<String>>(emptyList()) }
     var showSettings by remember { mutableStateOf(false) }
+    var timerInput by remember { mutableStateOf("10") }
 
     LaunchedEffect(groupId) {
         groupViewModel.loadGroupById(groupId) { group = it }
@@ -98,6 +101,27 @@ fun CreateGameScreen(
                                 colors = RadioButtonDefaults.colors(selectedColor = MainColor)
                             )
                             Text("Timer", color = Color.White)
+                        }
+
+                        if (settings.winCondition == WinCondition.TIMER) {
+                            OutlinedTextField(
+                                value = timerInput,
+                                onValueChange = { 
+                                    if (it.all { char -> char.isDigit() }) {
+                                        timerInput = it
+                                        settings = settings.copy(timerDurationMinutes = it.toIntOrNull() ?: 10)
+                                    }
+                                },
+                                label = { Text("Duration (minutes)", color = Color.Gray) },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    focusedBorderColor = MainColor,
+                                    unfocusedBorderColor = Color.Gray
+                                ),
+                                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                            )
                         }
 
                         Spacer(Modifier.height(8.dp))

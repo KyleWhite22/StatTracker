@@ -79,6 +79,7 @@ fun GroupScreen(
     }
 
     // Rename Dialog
+    // Rename Dialog
     if (showRenameDialog) {
         var newName by remember { mutableStateOf(group?.name ?: "") }
         Dialog(onDismissRequest = { showRenameDialog = false }) {
@@ -89,10 +90,10 @@ fun GroupScreen(
                 Column(modifier = Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     Text("Rename Group", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     OutlinedTextField(
-                        value = memberName,
-                        onValueChange = { memberName = it },
-                        label = { Text("Add player", color = Color.Gray, fontSize = 12.sp) },
-                        modifier = Modifier.weight(1f),
+                        value = newName,
+                        onValueChange = { newName = it },
+                        label = { Text("Group name", color = Color.Gray, fontSize = 12.sp) },
+                        modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(10.dp),
                         singleLine = true,
                         textStyle = LocalTextStyle.current.copy(fontSize = 13.sp),

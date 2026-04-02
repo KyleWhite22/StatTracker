@@ -28,6 +28,7 @@ data class PlayerGameStats(
 data class GameSettings(
     val winCondition: WinCondition = WinCondition.FIRST_TO_21,
     val scoringType: ScoringType = ScoringType.ONES_AND_TWOS,
+    val teamSize: Int = 3,
     val timerDurationMinutes: Int = 10
 )
 

@@ -13,8 +13,9 @@ data class Game(
     val score2: Int = 0,
     val playerStats: Map<String, PlayerGameStats> = emptyMap(), // name -> stats
     val status: String = "PENDING", // PENDING, ACTIVE, FINISHED
-    val isPaused: Boolean = false,
-    val durationSeconds: Int = 0
+    val paused: Boolean = false,
+    val durationSeconds: Int = 0,
+    val startTime: Long? = null
 )
 
 data class PlayerGameStats(
@@ -26,7 +27,8 @@ data class PlayerGameStats(
 
 data class GameSettings(
     val winCondition: WinCondition = WinCondition.FIRST_TO_21,
-    val scoringType: ScoringType = ScoringType.ONES_AND_TWOS
+    val scoringType: ScoringType = ScoringType.ONES_AND_TWOS,
+    val timerDurationMinutes: Int = 10
 )
 
 enum class WinCondition {

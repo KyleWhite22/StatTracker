@@ -1,6 +1,7 @@
 package com.mobileapps.stattracker.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mobileapps.stattracker.classes.Game
 import com.mobileapps.stattracker.classes.Group
 import com.mobileapps.stattracker.classes.PlayerTotals
 import com.mobileapps.stattracker.ui.theme.BackgroundColor
@@ -42,6 +44,7 @@ fun GroupScreen(
     groupId: String,
     onBackClick: () -> Unit,
     onStartGameClick: (String) -> Unit,
+    onResumeGameClick: (String, String) -> Unit,
     onViewPastGamesClick: (String) -> Unit,
     onDeleteGroupClick: () -> Unit,
     groupViewModel: GroupViewModel = viewModel(),
@@ -62,6 +65,7 @@ fun GroupScreen(
             isLoading = false
         }
         gameViewModel.loadLeaderboard(groupId)
+        gameViewModel.loadActiveGames(groupId)
     }
 
     val sortedLeaderboard = remember(gameViewModel.leaderboard, sortBy, group) {
@@ -79,7 +83,6 @@ fun GroupScreen(
             }
     }
 
-    // Rename Dialog
     // Rename Dialog
     if (showRenameDialog) {
         var newName by remember { mutableStateOf(group?.name ?: "") }
@@ -247,6 +250,37 @@ fun GroupScreen(
                         Icon(Icons.AutoMirrored.Filled.List, contentDescription = null, tint = MainColor, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(6.dp))
                         Text("Past Games", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MainColor)
+                    }
+                }
+
+                if (gameViewModel.activeGames.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("In Progress Games", color = MainColor, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.Start))
+                    Spacer(modifier = Modifier.height(8.dp))
+                    gameViewModel.activeGames.forEach { activeGame ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth().clickable { onResumeGameClick(activeGame.id, groupId) },
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = MainColor.copy(alpha = 0.1f))
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text("Game in progress", color = Color.White, fontWeight = FontWeight.Bold)
+                                    Text("${activeGame.score1} - ${activeGame.score2}", color = MainColor, fontSize = 20.sp, fontWeight = FontWeight.ExtraBold)
+                                }
+                                Button(
+                                    onClick = { onResumeGameClick(activeGame.id, groupId) },
+                                    colors = ButtonDefaults.buttonColors(containerColor = MainColor),
+                                    shape = RoundedCornerShape(8.dp)
+                                ) {
+                                    Text("Resume", color = Color.Black, fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
                     }
                 }
 

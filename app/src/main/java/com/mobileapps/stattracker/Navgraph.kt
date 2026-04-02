@@ -108,6 +108,9 @@ fun NavGraph(
                 onStartGameClick = { id ->
                     navController.navigate(NavRoutes.CreateGame.createRoute(id))
                 },
+                onResumeGameClick = { gameId, gId ->
+                    navController.navigate(NavRoutes.ActiveGame.createRoute(gameId, gId))
+                },
                 onViewPastGamesClick = { id ->
                     navController.navigate(NavRoutes.Games.createRoute(id))
                 },

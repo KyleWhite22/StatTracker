@@ -44,15 +44,18 @@ fun CreateGameScreen(
     var team2 by remember { mutableStateOf<List<String>>(emptyList()) }
     var showSettings by remember { mutableStateOf(false) }
     var timerInput by remember { mutableStateOf("10") }
+    var newPlayerName by remember { mutableStateOf("") }
+    var teamSizeError by remember { mutableStateOf("") }
 
     LaunchedEffect(groupId) {
         groupViewModel.loadGroupById(groupId) { group = it }
+        groupViewModel.loadWinRates(groupId)
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Configure Game", color = MainColor, fontWeight = FontWeight.Bold) },
+                title = { Text("Set Up Game", color = MainColor, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MainColor)
@@ -86,6 +89,8 @@ fun CreateGameScreen(
                     colors = CardDefaults.cardColors(containerColor = SurfaceColor)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
+
+                        // Win Condition
                         Text("Win Condition", color = Color.White, fontWeight = FontWeight.Bold)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             RadioButton(
@@ -106,7 +111,7 @@ fun CreateGameScreen(
                         if (settings.winCondition == WinCondition.TIMER) {
                             OutlinedTextField(
                                 value = timerInput,
-                                onValueChange = { 
+                                onValueChange = {
                                     if (it.all { char -> char.isDigit() }) {
                                         timerInput = it
                                         settings = settings.copy(timerDurationMinutes = it.toIntOrNull() ?: 10)
@@ -126,6 +131,7 @@ fun CreateGameScreen(
 
                         Spacer(Modifier.height(8.dp))
 
+                        // Scoring
                         Text("Scoring", color = Color.White, fontWeight = FontWeight.Bold)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             RadioButton(
@@ -142,32 +148,91 @@ fun CreateGameScreen(
                             )
                             Text("2s & 3s", color = Color.White)
                         }
+
+                        Spacer(Modifier.height(8.dp))
+
+                        // Team Size
+                        Text("Team Size", color = Color.White, fontWeight = FontWeight.Bold)
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(top = 4.dp)
+                        ) {
+                            listOf(1, 2, 3, 4, 5).forEach { size ->
+                                val selected = settings.teamSize == size
+                                Surface(
+                                    onClick = {
+                                        settings = settings.copy(teamSize = size)
+                                        team1 = emptyList()
+                                        team2 = emptyList()
+                                        teamSizeError = ""
+                                    },
+                                    shape = RoundedCornerShape(8.dp),
+                                    color = if (selected) MainColor else Color.White.copy(alpha = 0.1f),
+                                    modifier = Modifier.size(40.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(
+                                            "$size",
+                                            color = if (selected) Color.Black else Color.White,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 16.sp
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // Team Selection
+            Button(
+                onClick = {
+                    val members = group?.members ?: emptyList()
+                    val needed = settings.teamSize * 2
+                    if (members.size < needed) {
+                        teamSizeError = "Not enough players — need $needed, have ${members.size} \n Add more players in group screen"
+                        team1 = emptyList()
+                        team2 = emptyList()
+                    } else {
+                        teamSizeError = ""
+                        // Sort all members by win rate descending (0.0 for players with no history)
+                        val ranked = members.sortedByDescending { groupViewModel.winRates[it] ?: 0.0 }
+                        // Snake draft: pick teamSize players per team from the ranked list
+                        // Positions 0,2,4,... → team1 picks; 1,3,5,... → team2 picks
+                        val t1 = mutableListOf<String>()
+                        val t2 = mutableListOf<String>()
+                        ranked.take(needed).forEachIndexed { index, player ->
+                            if (index % 2 == 0) t1.add(player) else t2.add(player)
+                        }
+                        team1 = t1
+                        team2 = t2
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = SurfaceColor),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Generate Fair Teams (${settings.teamSize}v${settings.teamSize})", color = Color.White)
+            }
+
+            if (teamSizeError.isNotEmpty()) {
+                Text(teamSizeError, color = Color.Red, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Team columns
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 TeamColumn("Team 1", team1, team2, { team1 = it }, group?.members ?: emptyList())
                 TeamColumn("Team 2", team2, team1, { team2 = it }, group?.members ?: emptyList())
             }
 
             Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                onClick = {
-                    val shuffled = (group?.members ?: emptyList()).shuffled()
-                    val mid = shuffled.size / 2
-                    team1 = shuffled.take(mid)
-                    team2 = shuffled.drop(mid)
-                },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = SurfaceColor)
-            ) {
-                Text("Generate Fair Teams", color = Color.White)
-            }
 
             Button(
                 onClick = { onStartGame(settings, team1, team2) },
@@ -203,7 +268,12 @@ fun TeamColumn(label: String, team: List<String>, otherTeam: List<String>, onUpd
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(member, color = Color.White, fontSize = 13.sp, modifier = Modifier.weight(1f))
+                        Text(
+                            member,
+                            color = Color.White,
+                            fontSize = 13.sp,
+                            modifier = Modifier.weight(1f)
+                        )
                         Text(
                             "✕",
                             color = Color.White,
@@ -218,14 +288,20 @@ fun TeamColumn(label: String, team: List<String>, otherTeam: List<String>, onUpd
             Text("Add", fontSize = 12.sp)
         }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            availableMembers.forEach { member ->
+            if (availableMembers.isEmpty()) {
                 DropdownMenuItem(
-                    text = { Text(member) },
-                    onClick = {
-                        onUpdate(team + member)
-                        expanded = false
-                    }
-                )
+                    text = { Text("No players available", color = Color.Gray) },
+                    onClick = { expanded = false })
+            } else {
+                availableMembers.forEach { member ->
+                    DropdownMenuItem(
+                        text = { Text(member) },
+                        onClick = {
+                            onUpdate(team + member)
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
     }

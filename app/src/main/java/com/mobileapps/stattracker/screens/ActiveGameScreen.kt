@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -198,7 +199,12 @@ fun ActiveGameScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = if (game.paused) Color.Green else Color.Gray),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text(if (game.paused) "Resume" else "Pause", color = Color.Black, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = if (game.paused) "Resume\n(Shake to Resume)" else "Pause\n(Shake to Pause)",
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
                     }
 
                     Button(

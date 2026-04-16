@@ -1,22 +1,26 @@
 package com.mobileapps.stattracker.screens
 
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mobileapps.stattracker.classes.Game
+import com.mobileapps.stattracker.classes.PlayerGameStats
 import com.mobileapps.stattracker.ui.theme.BackgroundColor
 import com.mobileapps.stattracker.ui.theme.MainColor
 import com.mobileapps.stattracker.ui.theme.SurfaceColor
@@ -24,13 +28,6 @@ import com.mobileapps.stattracker.viewmodels.GameViewModel
 import com.mobileapps.stattracker.viewmodels.GroupViewModel
 import java.text.SimpleDateFormat
 import java.util.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.runtime.*
-import androidx.compose.ui.text.style.TextAlign
-import com.mobileapps.stattracker.classes.PlayerGameStats
-import androidx.compose.material.icons.filled.ArrowBack
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,19 +39,25 @@ fun GamesScreen(
 ) {
     Log.d("Lifecycle", "Games composed")
     val finishedGames = gameViewModel.finishedGames
-    var groupNames by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+
+    // Use a remembered map that persists across recompositions and page changes.
+    // We only fetch a group name once — if we already have it, we skip the Firestore call.
+    val groupNames = remember { mutableStateMapOf<String, String>() }
 
     LaunchedEffect(groupId) {
         gameViewModel.loadFinishedGames(groupId)
     }
 
+    // Only fetch names for IDs we haven't seen yet
     LaunchedEffect(finishedGames) {
-        val ids = finishedGames.map { it.groupId }.distinct()
-        ids.forEach { id ->
+        val unseenIds = finishedGames
+            .map { it.groupId }
+            .distinct()
+            .filter { it.isNotBlank() && !groupNames.containsKey(it) }
+
+        unseenIds.forEach { id ->
             groupViewModel.loadGroupById(id) { group ->
-                if (group != null) {
-                    groupNames = groupNames + (id to group.name)
-                }
+                if (group != null) groupNames[id] = group.name
             }
         }
     }
@@ -80,19 +83,63 @@ fun GamesScreen(
         containerColor = BackgroundColor
     ) { paddingValues ->
         if (finishedGames.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
                 Text("No past games found", color = Color.Gray)
             }
         } else {
-            LazyColumn(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(finishedGames) { game ->
-                    GameResultCard(game = game, groupName = groupNames[game.groupId] ?: "")
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(finishedGames, key = { it.id }) { game ->
+                        GameResultCard(game = game, groupName = groupNames[game.groupId] ?: "")
+                    }
+                }
+
+                // Pagination controls
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Button(
+                        onClick = { gameViewModel.prevPage() },
+                        enabled = gameViewModel.hasPrevPage,
+                        modifier = Modifier.weight(1f).height(48.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = SurfaceColor)
+                    ) {
+                        Text(
+                            "← Prev",
+                            color = if (gameViewModel.hasPrevPage) MainColor else Color.Gray,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Button(
+                        onClick = { gameViewModel.nextPage() },
+                        enabled = gameViewModel.hasNextPage,
+                        modifier = Modifier.weight(1f).height(48.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = SurfaceColor)
+                    ) {
+                        Text(
+                            "Next →",
+                            color = if (gameViewModel.hasNextPage) MainColor else Color.Gray,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
         }
@@ -101,8 +148,8 @@ fun GamesScreen(
 
 @Composable
 fun GameResultCard(game: Game, groupName: String) {
-    val sdf = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-    val dateString = sdf.format(Date(game.date))
+    val sdf = remember { SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()) }
+    val dateString = remember(game.date) { sdf.format(Date(game.date)) }
     var expanded by remember { mutableStateOf(false) }
 
     Card(
@@ -161,21 +208,32 @@ fun GameResultCard(game: Game, groupName: String) {
             if (expanded) {
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text("Player", color = Color.Gray, fontSize = 12.sp, modifier = Modifier.weight(1f))
                     listOf("PTS", "REB", "BLK", "STL").forEach {
-                        Text(it, color = Color.Gray, fontSize = 12.sp, modifier = Modifier.width(36.dp), textAlign = TextAlign.Center)
+                        Text(
+                            it,
+                            color = Color.Gray,
+                            fontSize = 12.sp,
+                            modifier = Modifier.width(36.dp),
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                val allPlayers = game.team1 + game.team2
+                val allPlayers = remember(game.team1, game.team2) { game.team1 + game.team2 }
                 allPlayers.forEach { playerName ->
                     val stats = game.playerStats[playerName] ?: PlayerGameStats()
                     val isTeam1 = game.team1.contains(playerName)
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {

@@ -10,7 +10,7 @@ sealed class NavRoutes(val route: String) {
     }
     object CreateGroup : NavRoutes("create group")
 
-    object DeleteGroup : NavRoutes("delete group")
+
 
     object GroupDetails : NavRoutes("group_details/{groupId}") {
         fun createRoute(groupId: String) = "group_details/$groupId"

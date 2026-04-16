@@ -1,5 +1,8 @@
 package com.mobileapps.stattracker.screens
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,8 +38,10 @@ fun LoginScreen(
 ) {
     Log.d("Lifecycle", "Login composed")
 
+    val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var showNoInternetDialog by remember { mutableStateOf(false) }
 
     val authState by authViewModel.authState.collectAsState()
 
@@ -44,6 +50,21 @@ fun LoginScreen(
             authViewModel.resetState()
             onLoginSuccess()
         }
+    }
+
+    if (showNoInternetDialog) {
+        AlertDialog(
+            onDismissRequest = { showNoInternetDialog = false },
+            title = { Text("No Internet Connection", color = Color.White) },
+            text = { Text("Please check your internet settings and try again.", color = Color.Gray) },
+            confirmButton = {
+                TextButton(onClick = { showNoInternetDialog = false }) {
+                    Text("OK", color = MainColor)
+                }
+            },
+            containerColor = Color(0xFF1E1E1E),
+            shape = RoundedCornerShape(16.dp)
+        )
     }
 
     Box(
@@ -117,7 +138,7 @@ fun LoginScreen(
             if (authState is AuthState.Error) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Invalid email or password",
+                    text = (authState as AuthState.Error).message,
                     color = Color.Red,
                     fontSize = 13.sp
                 )
@@ -126,7 +147,13 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { authViewModel.login(email, password) },
+                onClick = {
+                    if (isOnline(context)) {
+                        authViewModel.login(email, password)
+                    } else {
+                        showNoInternetDialog = true
+                    }
+                },
                 enabled = authState !is AuthState.Loading,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -161,4 +188,19 @@ fun LoginScreen(
             }
         }
     }
+}
+
+fun isOnline(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+    if (capabilities != null) {
+        if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+            return true
+        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+            return true
+        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+            return true
+        }
+    }
+    return false
 }

@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -55,11 +56,11 @@ fun LoginScreen(
     if (showNoInternetDialog) {
         AlertDialog(
             onDismissRequest = { showNoInternetDialog = false },
-            title = { Text("No Internet Connection", color = Color.White) },
-            text = { Text("Please check your internet settings and try again.", color = Color.Gray) },
+            title = { Text(stringResource(R.string.no_internet_title), color = Color.White) },
+            text = { Text(stringResource(R.string.no_internet_msg), color = Color.Gray) },
             confirmButton = {
                 TextButton(onClick = { showNoInternetDialog = false }) {
-                    Text("OK", color = MainColor)
+                    Text(stringResource(R.string.ok), color = MainColor)
                 }
             },
             containerColor = Color(0xFF1E1E1E),
@@ -82,14 +83,14 @@ fun LoginScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.pickuplogo),
-                contentDescription = "App Logo",
+                contentDescription = stringResource(R.string.app_logo_desc),
                 modifier = Modifier.size(120.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Pick UP↑",
+                text = stringResource(R.string.pick_up_logo_text),
                 color = MainColor,
                 fontSize = 42.sp,
                 fontWeight = FontWeight.ExtraBold,
@@ -101,7 +102,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email", color = TextGray) },
+                label = { Text(stringResource(R.string.email), color = TextGray) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 shape = RoundedCornerShape(12.dp),
@@ -120,7 +121,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password", color = TextGray) },
+                label = { Text(stringResource(R.string.password), color = TextGray) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -137,8 +138,11 @@ fun LoginScreen(
 
             if (authState is AuthState.Error) {
                 Spacer(modifier = Modifier.height(8.dp))
+                val errorMessage = (authState as AuthState.Error).let { error ->
+                    error.message ?: error.messageResId?.let { stringResource(it) } ?: ""
+                }
                 Text(
-                    text = (authState as AuthState.Error).message,
+                    text = errorMessage,
                     color = Color.Red,
                     fontSize = 13.sp
                 )
@@ -170,7 +174,7 @@ fun LoginScreen(
                     )
                 } else {
                     Text(
-                        text = "Log In",
+                        text = stringResource(R.string.log_in),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
@@ -181,9 +185,9 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Don't have an account? ", color = TextGray, fontSize = 14.sp)
+                Text(stringResource(R.string.no_account), color = TextGray, fontSize = 14.sp)
                 TextButton(onClick = onGoToSignUp) {
-                    Text("Sign Up", color = MainColor, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.sign_up), color = MainColor, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }

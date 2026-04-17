@@ -16,11 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mobileapps.stattracker.R
 import com.mobileapps.stattracker.classes.ScoringType
 import com.mobileapps.stattracker.classes.WinCondition
 import com.mobileapps.stattracker.ui.theme.BackgroundColor
@@ -121,9 +123,9 @@ fun ActiveGameScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Live Game", color = MainColor, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.live_game), color = MainColor, fontWeight = FontWeight.Bold)
                         if (game?.paused == true) {
-                            Text("PAUSED", color = Color.Red, fontWeight = FontWeight.ExtraBold, fontSize = 14.sp)
+                            Text(stringResource(R.string.paused), color = Color.Red, fontWeight = FontWeight.ExtraBold, fontSize = 14.sp)
                         }
                     }
                 },
@@ -169,12 +171,12 @@ fun ActiveGameScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("TEAM 1", color = Color.Gray, fontSize = 12.sp)
+                            Text(stringResource(R.string.team_1_caps), color = Color.Gray, fontSize = 12.sp)
                             Text("${game.score1}", color = Color.White, fontSize = 48.sp, fontWeight = FontWeight.Bold)
                         }
                         Text("-", color = MainColor, fontSize = 32.sp)
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("TEAM 2", color = Color.Gray, fontSize = 12.sp)
+                            Text(stringResource(R.string.team_2_caps), color = Color.Gray, fontSize = 12.sp)
                             Text("${game.score2}", color = Color.White, fontSize = 48.sp, fontWeight = FontWeight.Bold)
                         }
                     }
@@ -184,9 +186,9 @@ fun ActiveGameScreen(
 
                 // Stats Interface
                 Row(modifier = Modifier.weight(1f)) {
-                    TeamStatList("Team 1", game.team1, gameViewModel, onGameEnded)
+                    TeamStatList(stringResource(R.string.team_1), game.team1, gameViewModel, onGameEnded)
                     Spacer(modifier = Modifier.width(8.dp))
-                    TeamStatList("Team 2", game.team2, gameViewModel, onGameEnded)
+                    TeamStatList(stringResource(R.string.team_2), game.team2, gameViewModel, onGameEnded)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -200,7 +202,7 @@ fun ActiveGameScreen(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
-                            text = if (game.paused) "Resume\n(Shake to Resume)" else "Pause\n(Shake to Pause)",
+                            text = if (game.paused) stringResource(R.string.resume_shake) else stringResource(R.string.pause_shake),
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
@@ -213,7 +215,7 @@ fun ActiveGameScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = MainColor),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("End Game", color = Color.Black, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.end_game), color = Color.Black, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -254,12 +256,12 @@ fun PlayerStatCard(name: String, viewModel: GameViewModel, onGameEnded: (String)
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 StatButton("+$point1", { if (!game.paused) viewModel.logStat(name, "Points", point1, onGameEnded) }, enabled = !game.paused)
                 StatButton("+$point2", { if (!game.paused) viewModel.logStat(name, "Points", point2, onGameEnded) }, enabled = !game.paused)
-                StatButton("REB", { if (!game.paused) viewModel.logStat(name, "Rebounds") }, enabled = !game.paused)
+                StatButton(stringResource(R.string.header_reb), { if (!game.paused) viewModel.logStat(name, "Rebounds") }, enabled = !game.paused)
             }
             Spacer(modifier = Modifier.height(4.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                StatButton("BLK", { if (!game.paused) viewModel.logStat(name, "Blocks") }, enabled = !game.paused)
-                StatButton("STL", { if (!game.paused) viewModel.logStat(name, "Steals") }, enabled = !game.paused)
+                StatButton(stringResource(R.string.header_blk), { if (!game.paused) viewModel.logStat(name, "Blocks") }, enabled = !game.paused)
+                StatButton(stringResource(R.string.header_stl), { if (!game.paused) viewModel.logStat(name, "Steals") }, enabled = !game.paused)
             }
         }
     }

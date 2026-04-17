@@ -10,10 +10,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mobileapps.stattracker.R
 import com.mobileapps.stattracker.ui.theme.BackgroundColor
 import com.mobileapps.stattracker.ui.theme.MainColor
 
@@ -42,7 +44,7 @@ fun CreateGroupScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "New Group",
+                text = stringResource(R.string.new_group),
                 color = MainColor,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.ExtraBold,
@@ -53,7 +55,7 @@ fun CreateGroupScreen(
             OutlinedTextField(
                 value = groupName,
                 onValueChange = { groupName = it },
-                label = { Text("Group Name", color = Color.Gray) },
+                label = { Text(stringResource(R.string.group_name_label), color = Color.Gray) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -71,7 +73,7 @@ fun CreateGroupScreen(
             OutlinedTextField(
                 value = groupLocation,
                 onValueChange = { groupLocation = it },
-                label = { Text("Location", color = Color.Gray) },
+                label = { Text(stringResource(R.string.location_label), color = Color.Gray) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 shape = RoundedCornerShape(12.dp),
@@ -96,7 +98,7 @@ fun CreateGroupScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = MainColor)
             ) {
                 Text(
-                    text = "Create Group",
+                    text = stringResource(R.string.create_group_btn),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
@@ -106,7 +108,7 @@ fun CreateGroupScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             TextButton(onClick = onCancelClick) {
-                Text("Cancel", color = Color.Gray, fontSize = 16.sp)
+                Text(stringResource(R.string.cancel), color = Color.Gray, fontSize = 16.sp)
             }
         }
     }

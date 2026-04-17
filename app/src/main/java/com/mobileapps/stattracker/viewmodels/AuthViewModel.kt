@@ -1,9 +1,11 @@
 package com.mobileapps.stattracker.viewmodels
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
+import com.mobileapps.stattracker.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -11,7 +13,7 @@ sealed class AuthState {
     object Idle : AuthState()
     object Loading : AuthState()
     object Success : AuthState()
-    data class Error(val message: String) : AuthState()
+    data class Error(val message: String? = null, @StringRes val messageResId: Int? = null) : AuthState()
 }
 
 class AuthViewModel : ViewModel() {
@@ -23,7 +25,7 @@ class AuthViewModel : ViewModel() {
 
     fun login(email: String, password: String) {
         if (email.isBlank() || password.isBlank()) {
-            _authState.value = AuthState.Error("Please fill in all fields")
+            _authState.value = AuthState.Error(messageResId = R.string.error_fill_fields)
             return
         }
         _authState.value = AuthState.Loading
@@ -34,25 +36,25 @@ class AuthViewModel : ViewModel() {
                     _authState.value = AuthState.Success
                 } else {
                     auth.signOut()
-                    _authState.value = AuthState.Error("Please verify your email before logging in")
+                    _authState.value = AuthState.Error(messageResId = R.string.error_verify_email)
                 }
             }
             .addOnFailureListener {
-                _authState.value = AuthState.Error(it.message ?: "Login failed")
+                _authState.value = AuthState.Error(message = it.message ?: "Login failed")
             }
     }
 
     fun signUp(email: String, password: String, confirmPassword: String, username: String) {
         if (email.isBlank() || password.isBlank()) {
-            _authState.value = AuthState.Error("Please fill in all fields")
+            _authState.value = AuthState.Error(messageResId = R.string.error_fill_fields)
             return
         }
         if (password != confirmPassword) {
-            _authState.value = AuthState.Error("Passwords do not match")
+            _authState.value = AuthState.Error(messageResId = R.string.error_passwords_mismatch)
             return
         }
         if (password.length < 6) {
-            _authState.value = AuthState.Error("Password must be at least 6 characters")
+            _authState.value = AuthState.Error(messageResId = R.string.error_password_too_short)
             return
         }
         _authState.value = AuthState.Loading
@@ -78,6 +80,9 @@ class AuthViewModel : ViewModel() {
 
                 _authState.value = AuthState.Success
             }
+            .addOnFailureListener {
+                _authState.value = AuthState.Error(message = it.message ?: "Signup failed")
+            }
     }
 
     fun resetState() {
@@ -98,10 +103,10 @@ class AuthViewModel : ViewModel() {
                     _authState.value = AuthState.Success
                 }
                 .addOnFailureListener {
-                    _authState.value = AuthState.Error(it.message ?: "Failed to resend email")
+                    _authState.value = AuthState.Error(message = it.message ?: "Failed to resend email")
                 }
         } else {
-            _authState.value = AuthState.Error("No user found, please sign up again")
+            _authState.value = AuthState.Error(messageResId = R.string.error_no_user)
         }
     }
 }

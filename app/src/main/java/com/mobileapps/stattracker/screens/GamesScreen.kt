@@ -14,11 +14,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mobileapps.stattracker.R
 import com.mobileapps.stattracker.classes.Game
 import com.mobileapps.stattracker.classes.PlayerGameStats
 import com.mobileapps.stattracker.ui.theme.BackgroundColor
@@ -67,14 +69,14 @@ fun GamesScreen(
             TopAppBar(
                 title = {
                     Text(
-                        if (groupId == null || groupId == "all") "All Past Games" else "Past Games",
+                        if (groupId == null || groupId == "all") stringResource(R.string.all_past_games) else stringResource(R.string.past_games),
                         color = MainColor,
                         fontWeight = FontWeight.Bold
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MainColor)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = MainColor)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = BackgroundColor)
@@ -87,7 +89,7 @@ fun GamesScreen(
                 modifier = Modifier.fillMaxSize().padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
-                Text("No past games found", color = Color.Gray)
+                Text(stringResource(R.string.no_past_games), color = Color.Gray)
             }
         } else {
             Column(
@@ -122,7 +124,7 @@ fun GamesScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = SurfaceColor)
                     ) {
                         Text(
-                            "← Prev",
+                            stringResource(R.string.prev),
                             color = if (gameViewModel.hasPrevPage) MainColor else Color.Gray,
                             fontWeight = FontWeight.Bold
                         )
@@ -135,7 +137,7 @@ fun GamesScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = SurfaceColor)
                     ) {
                         Text(
-                            "Next →",
+                            stringResource(R.string.next),
                             color = if (gameViewModel.hasNextPage) MainColor else Color.Gray,
                             fontWeight = FontWeight.Bold
                         )
@@ -177,7 +179,7 @@ fun GameResultCard(game: Game, groupName: String) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Team 1", color = Color.White, fontSize = 14.sp)
+                    Text(stringResource(R.string.team_1), color = Color.White, fontSize = 14.sp)
                     Text(
                         "${game.score1}",
                         color = if (game.score1 > game.score2) MainColor else Color.White,
@@ -186,10 +188,10 @@ fun GameResultCard(game: Game, groupName: String) {
                     )
                 }
 
-                Text("VS", color = Color.Gray, fontWeight = FontWeight.ExtraBold)
+                Text(stringResource(R.string.vs), color = Color.Gray, fontWeight = FontWeight.ExtraBold)
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Team 2", color = Color.White, fontSize = 14.sp)
+                    Text(stringResource(R.string.team_2), color = Color.White, fontSize = 14.sp)
                     Text(
                         "${game.score2}",
                         color = if (game.score2 > game.score1) MainColor else Color.White,
@@ -212,8 +214,13 @@ fun GameResultCard(game: Game, groupName: String) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Player", color = Color.Gray, fontSize = 12.sp, modifier = Modifier.weight(1f))
-                    listOf("PTS", "REB", "BLK", "STL").forEach {
+                    Text(stringResource(R.string.player_header), color = Color.Gray, fontSize = 12.sp, modifier = Modifier.weight(1f))
+                    listOf(
+                        stringResource(R.string.header_pts),
+                        stringResource(R.string.header_reb),
+                        stringResource(R.string.header_blk),
+                        stringResource(R.string.header_stl)
+                    ).forEach {
                         Text(
                             it,
                             color = Color.Gray,
@@ -263,7 +270,7 @@ fun GameResultCard(game: Game, groupName: String) {
             }
 
             Text(
-                if (expanded) "▲ collapse" else "▼ tap to expand",
+                if (expanded) stringResource(R.string.collapse) else stringResource(R.string.tap_to_expand),
                 color = Color.White,
                 fontSize = 10.sp,
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 8.dp)

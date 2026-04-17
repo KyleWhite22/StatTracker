@@ -15,11 +15,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mobileapps.stattracker.R
 import com.mobileapps.stattracker.classes.GameSettings
 import com.mobileapps.stattracker.classes.Group
 import com.mobileapps.stattracker.classes.ScoringType
@@ -38,13 +41,13 @@ fun CreateGameScreen(
     groupViewModel: GroupViewModel = viewModel()
 ) {
     Log.d("Lifecycle", "Create Game composed")
+    val context = LocalContext.current
     var group by remember { mutableStateOf<Group?>(null) }
     var settings by remember { mutableStateOf(GameSettings()) }
     var team1 by remember { mutableStateOf<List<String>>(emptyList()) }
     var team2 by remember { mutableStateOf<List<String>>(emptyList()) }
     var showSettings by remember { mutableStateOf(false) }
     var timerInput by remember { mutableStateOf("10") }
-    var newPlayerName by remember { mutableStateOf("") }
     var teamSizeError by remember { mutableStateOf("") }
 
     LaunchedEffect(groupId) {
@@ -55,10 +58,10 @@ fun CreateGameScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Set Up Game", color = MainColor, fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.set_up_game), color = MainColor, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MainColor)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = MainColor)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = BackgroundColor)
@@ -80,7 +83,7 @@ fun CreateGameScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(if (showSettings) "Hide Settings" else "Game Settings", color = MainColor)
+                Text(if (showSettings) stringResource(R.string.hide_settings) else stringResource(R.string.game_settings), color = MainColor)
             }
 
             if (showSettings) {
@@ -91,21 +94,21 @@ fun CreateGameScreen(
                     Column(modifier = Modifier.padding(16.dp)) {
 
                         // Win Condition
-                        Text("Win Condition", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.win_condition), color = Color.White, fontWeight = FontWeight.Bold)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             RadioButton(
                                 selected = settings.winCondition == WinCondition.FIRST_TO_21,
                                 onClick = { settings = settings.copy(winCondition = WinCondition.FIRST_TO_21) },
                                 colors = RadioButtonDefaults.colors(selectedColor = MainColor)
                             )
-                            Text("First to 21", color = Color.White)
+                            Text(stringResource(R.string.first_to_21), color = Color.White)
                             Spacer(Modifier.width(16.dp))
                             RadioButton(
                                 selected = settings.winCondition == WinCondition.TIMER,
                                 onClick = { settings = settings.copy(winCondition = WinCondition.TIMER) },
                                 colors = RadioButtonDefaults.colors(selectedColor = MainColor)
                             )
-                            Text("Timer", color = Color.White)
+                            Text(stringResource(R.string.timer), color = Color.White)
                         }
 
                         if (settings.winCondition == WinCondition.TIMER) {
@@ -117,7 +120,7 @@ fun CreateGameScreen(
                                         settings = settings.copy(timerDurationMinutes = it.toIntOrNull() ?: 10)
                                     }
                                 },
-                                label = { Text("Duration (minutes)", color = Color.Gray) },
+                                label = { Text(stringResource(R.string.duration_minutes), color = Color.Gray) },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedTextColor = Color.White,
@@ -132,27 +135,27 @@ fun CreateGameScreen(
                         Spacer(Modifier.height(8.dp))
 
                         // Scoring
-                        Text("Scoring", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.scoring), color = Color.White, fontWeight = FontWeight.Bold)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             RadioButton(
                                 selected = settings.scoringType == ScoringType.ONES_AND_TWOS,
                                 onClick = { settings = settings.copy(scoringType = ScoringType.ONES_AND_TWOS) },
                                 colors = RadioButtonDefaults.colors(selectedColor = MainColor)
                             )
-                            Text("1s & 2s", color = Color.White)
+                            Text(stringResource(R.string.ones_and_twos), color = Color.White)
                             Spacer(Modifier.width(16.dp))
                             RadioButton(
                                 selected = settings.scoringType == ScoringType.TWOS_AND_THREES,
                                 onClick = { settings = settings.copy(scoringType = ScoringType.TWOS_AND_THREES) },
                                 colors = RadioButtonDefaults.colors(selectedColor = MainColor)
                             )
-                            Text("2s & 3s", color = Color.White)
+                            Text(stringResource(R.string.twos_and_threes), color = Color.White)
                         }
 
                         Spacer(Modifier.height(8.dp))
 
                         // Team Size
-                        Text("Team Size", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.team_size), color = Color.White, fontWeight = FontWeight.Bold)
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically,
@@ -193,7 +196,7 @@ fun CreateGameScreen(
                     val members = group?.members ?: emptyList()
                     val needed = settings.teamSize * 2
                     if (members.size < needed) {
-                        teamSizeError = "Not enough players — need $needed, have ${members.size} \n Add more players in group screen"
+                        teamSizeError = context.getString(R.string.not_enough_players, needed, members.size)
                         team1 = emptyList()
                         team2 = emptyList()
                     } else {
@@ -215,7 +218,7 @@ fun CreateGameScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = SurfaceColor),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Generate Fair Teams (${settings.teamSize}v${settings.teamSize})", color = Color.White)
+                Text(stringResource(R.string.generate_fair_teams_count, settings.teamSize, settings.teamSize), color = Color.White)
             }
 
             if (teamSizeError.isNotEmpty()) {
@@ -224,12 +227,10 @@ fun CreateGameScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Spacer(modifier = Modifier.height(12.dp))
-
             // Team columns
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                TeamColumn("Team 1", team1, team2, { team1 = it }, group?.members ?: emptyList())
-                TeamColumn("Team 2", team2, team1, { team2 = it }, group?.members ?: emptyList())
+                TeamColumn(stringResource(R.string.team_1), team1, team2, { team1 = it }, group?.members ?: emptyList())
+                TeamColumn(stringResource(R.string.team_2), team2, team1, { team2 = it }, group?.members ?: emptyList())
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -241,7 +242,7 @@ fun CreateGameScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = MainColor),
                 enabled = team1.isNotEmpty() && team2.isNotEmpty()
             ) {
-                Text("Start Game", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(stringResource(R.string.start_game), color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 18.sp)
             }
         }
     }
@@ -285,12 +286,12 @@ fun TeamColumn(label: String, team: List<String>, otherTeam: List<String>, onUpd
             }
         }
         Button(onClick = { expanded = true }, modifier = Modifier.padding(top = 4.dp)) {
-            Text("Add", fontSize = 12.sp)
+            Text(stringResource(R.string.add), fontSize = 12.sp)
         }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             if (availableMembers.isEmpty()) {
                 DropdownMenuItem(
-                    text = { Text("No players available", color = Color.Gray) },
+                    text = { Text(stringResource(R.string.no_players_available), color = Color.Gray) },
                     onClick = { expanded = false })
             } else {
                 availableMembers.forEach { member ->

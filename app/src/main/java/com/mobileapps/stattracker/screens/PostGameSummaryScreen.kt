@@ -9,10 +9,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mobileapps.stattracker.R
 import com.mobileapps.stattracker.classes.Game
 import com.mobileapps.stattracker.classes.PlayerGameStats
 import com.mobileapps.stattracker.ui.theme.BackgroundColor
@@ -38,7 +40,7 @@ fun PostGameSummaryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Game Summary", color = MainColor, fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.game_summary), color = MainColor, fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = BackgroundColor)
             )
         },
@@ -66,7 +68,7 @@ fun PostGameSummaryScreen(
                         modifier = Modifier.padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("FINAL SCORE", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.final_score), color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -74,12 +76,12 @@ fun PostGameSummaryScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("TEAM 1", color = Color.White, fontSize = 12.sp)
+                                Text(stringResource(R.string.team_1_caps), color = Color.White, fontSize = 12.sp)
                                 Text("${game?.score1}", color = if ((game?.score1 ?: 0) > (game?.score2 ?: 0)) MainColor else Color.White, fontSize = 48.sp, fontWeight = FontWeight.Bold)
                             }
                             Text("-", color = Color.Gray, fontSize = 32.sp)
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("TEAM 2", color = Color.White, fontSize = 12.sp)
+                                Text(stringResource(R.string.team_2_caps), color = Color.White, fontSize = 12.sp)
                                 Text("${game?.score2}", color = if ((game?.score2 ?: 0) > (game?.score1 ?: 0)) MainColor else Color.White, fontSize = 48.sp, fontWeight = FontWeight.Bold)
                             }
                         }
@@ -88,7 +90,7 @@ fun PostGameSummaryScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Text("Player Stats", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.Start))
+                Text(stringResource(R.string.player_stats), color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.Start))
                 
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -97,7 +99,7 @@ fun PostGameSummaryScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     item {
-                        Text("Team 1", color = MainColor, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.team_1), color = MainColor, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                     }
                     items(game?.team1 ?: emptyList()) { playerName ->
                         val stats = game?.playerStats?.get(playerName) ?: PlayerGameStats()
@@ -111,7 +113,7 @@ fun PostGameSummaryScreen(
                     }
 
                     item {
-                        Text("Team 2", color = MainColor, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.team_2), color = MainColor, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                     }
                     items(game?.team2 ?: emptyList()) { playerName ->
                         val stats = game?.playerStats?.get(playerName) ?: PlayerGameStats()
@@ -127,7 +129,7 @@ fun PostGameSummaryScreen(
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MainColor)
                 ) {
-                    Text("Done", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(stringResource(R.string.done), color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 }
             }
         }
@@ -149,10 +151,10 @@ fun StatSummaryCard(name: String, stats: PlayerGameStats) {
             Text(name, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.width(100.dp))
             
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                StatItem("PTS", stats.points)
-                StatItem("REB", stats.rebounds)
-                StatItem("BLK", stats.blocks)
-                StatItem("STL", stats.steals)
+                StatItem(stringResource(R.string.header_pts), stats.points)
+                StatItem(stringResource(R.string.header_reb), stats.rebounds)
+                StatItem(stringResource(R.string.header_blk), stats.blocks)
+                StatItem(stringResource(R.string.header_stl), stats.steals)
             }
         }
     }

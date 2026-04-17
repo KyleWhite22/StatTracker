@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -60,14 +61,14 @@ fun SignUpScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.pickuplogo),
-                contentDescription = "App Logo",
+                contentDescription = stringResource(R.string.app_logo_desc),
                 modifier = Modifier.size(100.dp)
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Pick UP↑",
+                text = stringResource(R.string.pick_up_logo_text),
                 color = MainColor,
                 fontSize = 42.sp,
                 fontWeight = FontWeight.ExtraBold,
@@ -79,7 +80,7 @@ fun SignUpScreen(
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                label = { Text("Username", color = TextGray) },
+                label = { Text(stringResource(R.string.username), color = TextGray) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -97,7 +98,7 @@ fun SignUpScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email", color = TextGray) },
+                label = { Text(stringResource(R.string.email), color = TextGray) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 shape = RoundedCornerShape(12.dp),
@@ -116,7 +117,7 @@ fun SignUpScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password", color = TextGray) },
+                label = { Text(stringResource(R.string.password), color = TextGray) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -136,7 +137,7 @@ fun SignUpScreen(
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                label = { Text("Confirm Password", color = TextGray) },
+                label = { Text(stringResource(R.string.confirm_password), color = TextGray) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -153,8 +154,11 @@ fun SignUpScreen(
 
             if (authState is AuthState.Error) {
                 Spacer(modifier = Modifier.height(8.dp))
+                val errorMessage = (authState as AuthState.Error).let { error ->
+                    error.message ?: error.messageResId?.let { stringResource(it) } ?: ""
+                }
                 Text(
-                    text = (authState as AuthState.Error).message,
+                    text = errorMessage,
                     color = Color.Red,
                     fontSize = 13.sp
                 )
@@ -180,7 +184,7 @@ fun SignUpScreen(
                     )
                 } else {
                     Text(
-                        text = "Create Account",
+                        text = stringResource(R.string.create_account),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
@@ -191,9 +195,9 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Already have an account? ", color = TextGray, fontSize = 14.sp)
+                Text(stringResource(R.string.already_have_account), color = TextGray, fontSize = 14.sp)
                 TextButton(onClick = onGoToLogin) {
-                    Text("Log In", color = MainColor, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.log_in), color = MainColor, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }

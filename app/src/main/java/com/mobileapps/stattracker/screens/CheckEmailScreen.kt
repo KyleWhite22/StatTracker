@@ -9,11 +9,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mobileapps.stattracker.R
 import com.mobileapps.stattracker.viewmodels.AuthState
 import com.mobileapps.stattracker.viewmodels.AuthViewModel
 import com.mobileapps.stattracker.ui.theme.BackgroundColor
@@ -44,14 +46,14 @@ fun CheckEmailScreen(
         ) {
 
             Text(
-                text = "Check Your Email",
+                text = stringResource(R.string.check_your_email),
                 color = MainColor,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.ExtraBold
             )
 
             Text(
-                text = "We sent a verification link to:",
+                text = stringResource(R.string.verification_link_sent),
                 color = TextGray,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center
@@ -72,7 +74,7 @@ fun CheckEmailScreen(
             }
 
             Text(
-                text = "Click link to verify account, email may be in SPAM.",
+                text = stringResource(R.string.verify_account_msg),
                 color = TextGray,
                 fontSize = 13.sp,
                 textAlign = TextAlign.Center
@@ -90,7 +92,7 @@ fun CheckEmailScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = MainColor)
             ) {
                 Text(
-                    text = "Go to Login",
+                    text = stringResource(R.string.go_to_login),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
@@ -99,22 +101,24 @@ fun CheckEmailScreen(
 
             // Resend email
             if (authState is AuthState.Error) {
+                val error = authState as AuthState.Error
+                val errorMessage = error.message ?: error.messageResId?.let { stringResource(it) } ?: ""
                 Text(
-                    text = (authState as AuthState.Error).message,
+                    text = errorMessage,
                     color = Color.Red,
                     fontSize = 13.sp
                 )
             }
             if (authState is AuthState.Success) {
                 Text(
-                    text = "Verification email resent!",
+                    text = stringResource(R.string.verification_resent),
                     color = Color(0xFF4CAF50),
                     fontSize = 13.sp
                 )
             }
 
             TextButton(onClick = { authViewModel.resendVerificationEmail() }) {
-                Text("Resend verification email", color = MainColor, fontSize = 14.sp)
+                Text(stringResource(R.string.resend_verification), color = MainColor, fontSize = 14.sp)
             }
         }
     }

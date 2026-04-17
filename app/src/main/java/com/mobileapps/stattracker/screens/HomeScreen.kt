@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,7 +44,7 @@ fun HomeScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Pick UP↑",
+            text = stringResource(R.string.pick_up_logo_text),
             color = MainColor,
             fontSize = 42.sp,
             fontWeight = FontWeight.ExtraBold,
@@ -53,7 +54,7 @@ fun HomeScreen(
 
         Image(
             painter = painterResource(id = R.drawable.pickuplogo),
-            contentDescription = "App Logo",
+            contentDescription = stringResource(R.string.app_logo_desc),
             modifier = Modifier.size(140.dp)
         )
 
@@ -71,7 +72,7 @@ fun HomeScreen(
             ) {
                 Icon(Icons.Default.Add, contentDescription = null, tint = Color.Black)
                 Spacer(Modifier.width(8.dp))
-                Text("Group", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                Text(stringResource(R.string.group_btn), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
             }
 
             Button(
@@ -85,14 +86,14 @@ fun HomeScreen(
             ) {
                 Icon(Icons.AutoMirrored.Filled.List, contentDescription = null, tint = MainColor)
                 Spacer(Modifier.width(8.dp))
-                Text("Games", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MainColor)
+                Text(stringResource(R.string.games_btn), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MainColor)
             }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            "My Groups",
+            stringResource(R.string.my_groups),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White.copy(alpha = 0.9f)
@@ -112,7 +113,7 @@ fun HomeScreen(
         ) {
             if (groups.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("No groups yet", color = Color.Gray, fontSize = 16.sp)
+                    Text(stringResource(R.string.no_groups_yet), color = Color.Gray, fontSize = 16.sp)
                 }
             } else {
                 groups.forEach { group ->
@@ -138,7 +139,7 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(onClick = onLogOut) {
-            Text("Log Out", color = MainColor.copy(alpha = 0.8f), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.log_out), color = MainColor.copy(alpha = 0.8f), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         }
     }
 }

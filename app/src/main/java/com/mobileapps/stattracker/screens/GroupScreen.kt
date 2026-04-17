@@ -19,13 +19,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mobileapps.stattracker.classes.Game
+import com.mobileapps.stattracker.R
 import com.mobileapps.stattracker.classes.Group
 import com.mobileapps.stattracker.classes.PlayerTotals
 import com.mobileapps.stattracker.ui.theme.BackgroundColor
@@ -34,8 +35,13 @@ import com.mobileapps.stattracker.ui.theme.SurfaceColor
 import com.mobileapps.stattracker.viewmodels.GameViewModel
 import com.mobileapps.stattracker.viewmodels.GroupViewModel
 
-enum class SortStat(val label: String) {
-    WINS("Wins"), WIN_PCT("Win%"), POINTS("Points"), REBOUNDS("Rebounds"), BLOCKS("Blocks"), STEALS("Steals")
+enum class SortStat(val labelRes: Int) {
+    WINS(R.string.sort_wins),
+    WIN_PCT(R.string.sort_win_pct),
+    POINTS(R.string.sort_points),
+    REBOUNDS(R.string.sort_rebounds),
+    BLOCKS(R.string.sort_blocks),
+    STEALS(R.string.sort_steals)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,11 +98,11 @@ fun GroupScreen(
                 colors = CardDefaults.cardColors(containerColor = SurfaceColor)
             ) {
                 Column(modifier = Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Text("Rename Group", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(stringResource(R.string.rename_group), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     OutlinedTextField(
                         value = newName,
                         onValueChange = { newName = it },
-                        label = { Text("Group name", color = Color.Gray, fontSize = 12.sp) },
+                        label = { Text(stringResource(R.string.group_name), color = Color.Gray, fontSize = 12.sp) },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(10.dp),
                         singleLine = true,
@@ -114,7 +120,7 @@ fun GroupScreen(
                             onClick = { showRenameDialog = false },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text("Cancel", color = Color.Gray)
+                            Text(stringResource(R.string.cancel), color = Color.Gray)
                         }
                         Button(
                             onClick = {
@@ -129,7 +135,7 @@ fun GroupScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = MainColor),
                             shape = RoundedCornerShape(10.dp)
                         ) {
-                            Text("Save", color = Color.Black, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.save), color = Color.Black, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -142,8 +148,8 @@ fun GroupScreen(
         AlertDialog(
             onDismissRequest = { showDeleteConfirmDialog = false },
             containerColor = SurfaceColor,
-            title = { Text("Delete Group", color = Color.White, fontWeight = FontWeight.Bold) },
-            text = { Text("Are you sure you want to delete this group? This cannot be undone.", color = Color.Gray) },
+            title = { Text(stringResource(R.string.delete_group), color = Color.White, fontWeight = FontWeight.Bold) },
+            text = { Text(stringResource(R.string.delete_group_confirm), color = Color.Gray) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -153,12 +159,12 @@ fun GroupScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text("Delete", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.delete), color = Color.White, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirmDialog = false }) {
-                    Text("Cancel", color = Color.Gray)
+                    Text(stringResource(R.string.cancel), color = Color.Gray)
                 }
             }
         )
@@ -169,7 +175,7 @@ fun GroupScreen(
             TopAppBar(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(group?.name ?: "Loading...", color = MainColor, fontWeight = FontWeight.Bold)
+                        Text(group?.name ?: stringResource(R.string.loading), color = MainColor, fontWeight = FontWeight.Bold)
                         if (group?.location?.isNotBlank() == true) {
                             Text(group?.location ?: "", color = Color.Gray, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
                         }
@@ -177,13 +183,13 @@ fun GroupScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MainColor)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = MainColor)
                     }
                 },
                 actions = {
                     Box {
                         IconButton(onClick = { menuExpanded = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "Options", tint = MainColor)
+                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.options), tint = MainColor)
                         }
                         DropdownMenu(
                             expanded = menuExpanded,
@@ -191,7 +197,7 @@ fun GroupScreen(
                             containerColor = SurfaceColor
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Rename Group", color = Color.White) },
+                                text = { Text(stringResource(R.string.rename_group), color = Color.White) },
                                 onClick = {
                                     menuExpanded = false
                                     showRenameDialog = true
@@ -199,7 +205,7 @@ fun GroupScreen(
                             )
                             HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
                             DropdownMenuItem(
-                                text = { Text("Delete Group", color = Color.Red) },
+                                text = { Text(stringResource(R.string.delete_group), color = Color.Red) },
                                 onClick = {
                                     menuExpanded = false
                                     showDeleteConfirmDialog = true
@@ -219,7 +225,7 @@ fun GroupScreen(
             }
         } else if (group == null) {
             Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
-                Text("Group not found", color = Color.White)
+                Text(stringResource(R.string.group_not_found), color = Color.White)
             }
         } else {
             Column(
@@ -239,7 +245,7 @@ fun GroupScreen(
                     ) {
                         Icon(Icons.Default.PlayArrow, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(6.dp))
-                        Text("Start Game", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                        Text(stringResource(R.string.start_game), fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                     }
                     Button(
                         onClick = { onViewPastGamesClick(groupId) },
@@ -249,13 +255,13 @@ fun GroupScreen(
                     ) {
                         Icon(Icons.AutoMirrored.Filled.List, contentDescription = null, tint = MainColor, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(6.dp))
-                        Text("Past Games", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MainColor)
+                        Text(stringResource(R.string.past_games), fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MainColor)
                     }
                 }
 
                 if (gameViewModel.activeGames.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("In Progress Games", color = MainColor, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.Start))
+                    Text(stringResource(R.string.in_progress_games), color = MainColor, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.Start))
                     Spacer(modifier = Modifier.height(8.dp))
                     gameViewModel.activeGames.forEach { activeGame ->
                         Card(
@@ -269,7 +275,7 @@ fun GroupScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Column {
-                                    Text("Game in progress", color = Color.White, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(R.string.game_in_progress), color = Color.White, fontWeight = FontWeight.Bold)
                                     Text("${activeGame.score1} - ${activeGame.score2}", color = MainColor, fontSize = 20.sp, fontWeight = FontWeight.ExtraBold)
                                 }
                                 Button(
@@ -277,7 +283,7 @@ fun GroupScreen(
                                     colors = ButtonDefaults.buttonColors(containerColor = MainColor),
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
-                                    Text("Resume", color = Color.Black, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(R.string.resume), color = Color.Black, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
@@ -295,7 +301,7 @@ fun GroupScreen(
                     OutlinedTextField(
                         value = memberName,
                         onValueChange = { memberName = it },
-                        label = { Text("Add player", color = Color.Gray, fontSize = 12.sp) },
+                        label = { Text(stringResource(R.string.add_player), color = Color.Gray, fontSize = 12.sp) },
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(10.dp),
                         singleLine = true,
@@ -322,7 +328,7 @@ fun GroupScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = MainColor),
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp)
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.Black, modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add), tint = Color.Black, modifier = Modifier.size(20.dp))
                     }
                 }
 
@@ -334,8 +340,8 @@ fun GroupScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Leaderboard", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                    Text("${group?.members?.size ?: 0} players", color = Color.Gray, fontSize = 13.sp)
+                    Text(stringResource(R.string.leaderboard), color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.players_count, group?.members?.size ?: 0), color = Color.Gray, fontSize = 13.sp)
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -346,7 +352,7 @@ fun GroupScreen(
                         FilterChip(
                             selected = sortBy == stat,
                             onClick = { sortBy = stat },
-                            label = { Text(stat.label, fontSize = 12.sp) },
+                            label = { Text(stringResource(stat.labelRes), fontSize = 12.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = MainColor,
                                 selectedLabelColor = Color.Black,
@@ -369,17 +375,17 @@ fun GroupScreen(
                     Row(modifier = Modifier.weight(1f)) {
                         Spacer(modifier = Modifier.width(28.dp))
                     }
-                    listOf("WIN", "WIN%", "PTS", "REB", "BLK", "STL").forEach { col ->
+                    listOf(
+                        stringResource(R.string.header_win) to SortStat.WINS,
+                        stringResource(R.string.header_win_pct) to SortStat.WIN_PCT,
+                        stringResource(R.string.header_pts) to SortStat.POINTS,
+                        stringResource(R.string.header_reb) to SortStat.REBOUNDS,
+                        stringResource(R.string.header_blk) to SortStat.BLOCKS,
+                        stringResource(R.string.header_stl) to SortStat.STEALS
+                    ).forEach { (col, stat) ->
                         Text(
                             col,
-                            color = if (
-                                (col == "WIN" && sortBy == SortStat.WINS) ||
-                                (col == "WIN%" && sortBy == SortStat.WIN_PCT) ||
-                                (col == "PTS" && sortBy == SortStat.POINTS) ||
-                                (col == "REB" && sortBy == SortStat.REBOUNDS) ||
-                                (col == "BLK" && sortBy == SortStat.BLOCKS) ||
-                                (col == "STL" && sortBy == SortStat.STEALS)
-                            ) MainColor else Color.Gray,
+                            color = if (sortBy == stat) MainColor else Color.Gray,
                             fontSize = 11.sp,
                             modifier = Modifier.width(32.dp),
                             textAlign = TextAlign.Center
@@ -399,7 +405,7 @@ fun GroupScreen(
                     if (sortedLeaderboard.isEmpty()) {
                         item {
                             Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-                                Text("No stats yet — play some games!", color = Color.Gray, fontSize = 14.sp)
+                                Text(stringResource(R.string.no_stats), color = Color.Gray, fontSize = 14.sp)
                             }
                         }
                     } else {

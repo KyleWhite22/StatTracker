@@ -1,0 +1,131 @@
+<resources>
+    <string name="app_name">Seguimiento de Estadísticas</string>
+    <string name="rename_group">Renombrar Grupo</string>
+    <string name="group_name">Nombre del grupo</string>
+    <string name="cancel">Cancelar</string>
+    <string name="save">Guardar</string>
+    <string name="delete_group">Eliminar Grupo</string>
+    <string name="delete_group_confirm">¿Estás seguro de que deseas eliminar este grupo? Esto no se puede deshacer.</string>
+    <string name="delete">Eliminar</string>
+    <string name="loading">Cargando…</string>
+    <string name="back">Volver</string>
+    <string name="options">Opciones</string>
+    <string name="group_not_found">Grupo no encontrado</string>
+    <string name="start_game">Iniciar Juego</string>
+    <string name="past_games">Juegos Pasados</string>
+    <string name="in_progress_games">Juegos en Progreso</string>
+    <string name="game_in_progress">Juego en progreso</string>
+    <string name="resume">Reanudar</string>
+    <string name="add_player">Añadir jugador</string>
+    <string name="add">Añadir</string>
+    <string name="leaderboard">Tabla de Clasificación</string>
+    <string name="players_count">%1$d jugadores</string>
+    <string name="no_stats">Aún no hay estadísticas — ¡juega algunos juegos!</string>
+    <string name="header_win">GAN</string>
+    <string name="header_win_pct">GAN%</string>
+    <string name="header_pts">PTS</string>
+    <string name="header_reb">REB</string>
+    <string name="header_blk">TAP</string>
+    <string name="header_stl">ROB</string>
+    <string name="sort_wins">Victorias</string>
+    <string name="sort_win_pct">% Victorias</string>
+    <string name="sort_points">Puntos</string>
+    <string name="sort_rebounds">Rebotes</string>
+    <string name="sort_blocks">Tapones</string>
+    <string name="sort_steals">Robos</string>
+
+    <!-- HomeScreen strings -->
+    <string name="pick_up_logo_text">Pick UP↑</string>
+    <string name="app_logo_desc">Logo de la aplicación</string>
+    <string name="group_btn">Grupo</string>
+    <string name="games_btn">Juegos</string>
+    <string name="my_groups">Mis Grupos</string>
+    <string name="no_groups_yet">Aún no hay grupos</string>
+    <string name="log_out">Cerrar Sesión</string>
+
+    <!-- GamesScreen strings -->
+    <string name="all_past_games">Todos los Juegos Pasados</string>
+    <string name="no_past_games">No se encontraron juegos pasados</string>
+    <string name="team_1">Equipo 1</string>
+    <string name="team_2">Equipo 2</string>
+    <string name="vs">VS</string>
+    <string name="player_header">Jugador</string>
+    <string name="collapse">▲ colapsar</string>
+    <string name="tap_to_expand">▼ tocar para expandir</string>
+    <string name="prev">← Anterior</string>
+    <string name="next">Siguiente →</string>
+
+    <!-- CreateGameScreen strings -->
+    <string name="set_up_game">Configurar Juego</string>
+    <string name="configure_game">Configurar Juego</string>
+    <string name="hide_settings">Ocultar Ajustes</string>
+    <string name="game_settings">Ajustes del Juego</string>
+    <string name="win_condition">Condición de Victoria</string>
+    <string name="first_to_21">Primero a 21</string>
+    <string name="timer">Temporizador</string>
+    <string name="duration_minutes">Duración (minutos)</string>
+    <string name="scoring">Puntuación</string>
+    <string name="ones_and_twos">1s y 2s</string>
+    <string name="twos_and_threes">2s y 3s</string>
+    <string name="team_size">Tamaño del Equipo</string>
+    <string name="generate_fair_teams_count">Generar Equipos Equitativos (%1$dv%2$d)</string>
+    <string name="not_enough_players">No hay suficientes jugadores — necesitas %1$d, tienes %2$d \n Añade más jugadores en la pantalla del grupo</string>
+    <string name="no_players_available">No hay jugadores disponibles</string>
+
+    <!-- ActiveGameScreen strings -->
+    <string name="live_game">Juego en Vivo</string>
+    <string name="paused">PAUSADO</string>
+    <string name="team_1_caps">EQUIPO 1</string>
+    <string name="team_2_caps">EQUIPO 2</string>
+    <string name="pause">Pausar</string>
+    <string name="end_game">Finalizar Juego</string>
+    <string name="resume_shake">Reanudar\n(Agitar para Reanudar)</string>
+    <string name="pause_shake">Pausar\n(Agitar para Pausar)</string>
+
+    <!-- LoginScreen strings -->
+    <string name="email">Correo electrónico</string>
+    <string name="password">Contraseña</string>
+    <string name="invalid_credentials">Correo o contraseña inválidos</string>
+    <string name="log_in">Iniciar Sesión</string>
+    <string name="no_account">¿No tienes una cuenta? </string>
+    <string name="sign_up">Regístrate</string>
+    <string name="no_internet_title">Sin conexión a Internet</string>
+    <string name="no_internet_msg">Por favor, comprueba tu configuración de red e inténtalo de nuevo.</string>
+    <string name="ok">Aceptar</string>
+
+    <!-- SignupScreen strings -->
+    <string name="username">Nombre de usuario</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="create_account">Crear cuenta</string>
+    <string name="already_have_account">¿Ya tienes una cuenta? </string>
+
+    <!-- CheckEmailScreen strings -->
+    <string name="check_your_email">Revisa tu correo</string>
+    <string name="verification_link_sent">Enviamos un enlace de verificación a:</string>
+    <string name="verify_account_msg">Haz clic en el enlace para verificar tu cuenta. El correo puede estar en SPAM.</string>
+    <string name="go_to_login">Ir al Inicio de Sesión</string>
+    <string name="verification_resent">¡Correo de verificación reeenviado!</string>
+    <string name="resend_verification">Reenviar correo de verificación</string>
+
+    <!-- CreateGroupScreen strings -->
+    <string name="new_group">Nuevo Grupo</string>
+    <string name="group_name_label">Nombre del Grupo</string>
+    <string name="location_label">Ubicación</string>
+    <string name="create_group_btn">Crear Grupo</string>
+
+    <!-- PostGameSummaryScreen strings -->
+    <string name="game_summary">Resumen del Juego</string>
+    <string name="final_score">PUNTUACIÓN FINAL</string>
+    <string name="player_stats">Estadísticas del Jugador</string>
+    <string name="done">Listo</string>
+
+    <!-- Auth Error strings -->
+    <string name="error_fill_fields">Por favor, rellena todos los campos</string>
+    <string name="error_verify_email">Por favor, verifica tu correo antes de iniciar sesión</string>
+    <string name="error_passwords_mismatch">Las contraseñas no coinciden</string>
+    <string name="error_password_too_short">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="error_login_failed">Error al iniciar sesión</string>
+    <string name="error_resend_failed">Error al reenviar el correo</string>
+    <string name="error_no_user">No se encontró el usuario, por favor regístrate de nuevo</string>
+    <string name="generate_fair_teams">Generar Equipos Equitativos</string>
+</resources>
